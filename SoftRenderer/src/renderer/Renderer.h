@@ -40,5 +40,5 @@ private:
 	std::unordered_map<ShaderType, std::shared_ptr<Shader>> shaderLibs;
 	std::shared_ptr<Shader> activeShader;
 	Viewport viewport;
-	FrameBuffer frameBuffer;
+	std::unique_ptr<FrameBuffer> frameBuffer;
 };

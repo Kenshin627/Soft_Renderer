@@ -9,6 +9,19 @@ Window::Window(const char* title, uint32_t width, uint32_t height)
 	}
 	windowHandle = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
 	drawHnadle = SDL_CreateRenderer(windowHandle, -1, 0);
+	glm::mat3 yInverse =
+	{
+		{ 1, 0,  0 },
+		{ 0, -1, 0 },
+		{ 0, 0,  1 }
+	};
+	glm::mat3 translateH =
+	{
+		{ 1, 0,      0 },
+		{ 0, 1,      0 },
+		{ 0, height, 1 }
+	};
+	sdlTransform = translateH * yInverse;
 }
 
 Window::~Window()
@@ -37,13 +50,15 @@ void Window::Run()
 		Clear();
 		softRenderer->Clear();
 		softRenderer->Draw(this);
+		SDL_RenderPresent(drawHnadle);
 	}
 }
 
 void Window::DrawPoint(int x, int y, const glm::vec3& color)
 {
+	glm::vec2 sdlPoint = sdlTransform * glm::vec3(x, y, 1.0f);
 	SDL_SetRenderDrawColor(drawHnadle, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawPoint(drawHnadle, x, y);
+	SDL_RenderDrawPoint(drawHnadle, sdlPoint.x, sdlPoint.y);
 }
 
 void Window::Clear()

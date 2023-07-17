@@ -14,9 +14,10 @@ public:
 	void Clear();
 	void Run();
 private:
-	SDL_Window* windowHandle;
-	SDL_Renderer* drawHnadle;
-	Renderer* softRenderer;
+	SDL_Window* windowHandle = nullptr;
+	SDL_Renderer* drawHnadle = nullptr;
+	Renderer* softRenderer = nullptr;
 	bool shouldClosed = false;
 	glm::vec3 clearColor = { 10/255, 10/255, 10/255 };
+	glm::mat3 sdlTransform;
 };

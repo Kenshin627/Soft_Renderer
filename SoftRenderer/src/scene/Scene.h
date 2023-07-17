@@ -1,5 +1,5 @@
 #pragma once
-#include "../model.h"
+#include "../model/model.h"
 #include "../camera/Camera.h"
 #include "../light/DirectionLight.h"
 #include <vector>

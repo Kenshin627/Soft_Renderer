@@ -3,7 +3,6 @@
 
 struct FrameBuffer
 {
-	FrameBuffer() = default;
 	FrameBuffer(uint32_t width, uint32_t height);
 	~FrameBuffer();
 	void Reset();

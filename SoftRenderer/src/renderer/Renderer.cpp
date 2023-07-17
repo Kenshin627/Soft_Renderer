@@ -39,7 +39,7 @@ void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t heig
 		{ 0, 0, 1, 0 },
 		{ width / 2 + x, height / 2 + y, 0, 1 }
 	};
-	frameBuffer = FrameBuffer(width, height);
+	frameBuffer = std::make_unique<FrameBuffer>(width, height);
 }
 
 void Renderer::Draw(Window* winHandle)
@@ -57,6 +57,8 @@ void Renderer::Draw(Window* winHandle)
 		for (uint32_t i = 0; i < modelCount; i++)
 		{
 			const Model& model = models[i];
+			activeShader->SetSampler(0, model.diffuse());
+			activeShader->SetSampler(1, model.specular());
 			uint32_t faces = model.nfaces();
 			for (uint32_t j = 0; j < faces; j++)
 			{
@@ -76,7 +78,7 @@ void Renderer::Draw(Window* winHandle)
 
 void Renderer::Clear()
 {
-	frameBuffer.Reset();
+	frameBuffer->Reset();
 }
 
 void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle)
@@ -98,7 +100,7 @@ void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle)
 			float depth = 1.0 / (clipped_bc.x / beforeClippedCoords[0].z + clipped_bc.y / beforeClippedCoords[1].z + clipped_bc.z / beforeClippedCoords[2].z);
 			
 			uint32_t pixelIndex = x + y * viewport.height;
-			if (depth < frameBuffer.zBuffer[pixelIndex])
+			if (depth < frameBuffer->zBuffer[pixelIndex])
 			{
 				activeShader->baryCentric = { depth * clipped_bc.x / beforeClippedCoords[0].z, depth * clipped_bc.y / beforeClippedCoords[1].z, depth * clipped_bc.z / beforeClippedCoords[2].z };				
 				glm::vec4 gl_FragColor;
@@ -106,7 +108,7 @@ void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle)
 				{
 					//draw...
 					windHandle->DrawPoint(p.x, p.y, glm::vec3(gl_FragColor));
-					frameBuffer.zBuffer[pixelIndex] = depth;
+					frameBuffer->zBuffer[pixelIndex] = depth;
 				}
 			}
 		}
@@ -116,8 +118,8 @@ void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle)
 BoundingBox Renderer::GetBoundingBox(const glm::vec4* vertices)
 {
 	BoundingBox bbox;
-	glm::vec2 min = { 0, 0 };
-	glm::vec2 max = { viewport.width - 1, viewport.height - 1 };
+	glm::vec2 min { 0, 0 };
+	glm::vec2 max { viewport.width - 1, viewport.height - 1 };
 	bbox.min = max;
 	bbox.max = min;
 	for (uint32_t i = 0; i < 3; i++)
@@ -125,7 +127,7 @@ BoundingBox Renderer::GetBoundingBox(const glm::vec4* vertices)
 		bbox.min.x = glm::max(min.x, glm::min(bbox.min.x, vertices[i].x));
 		bbox.min.y = glm::max(min.y, glm::min(bbox.min.y, vertices[i].y));
 		bbox.max.x = glm::min(max.x, glm::max(bbox.max.x, vertices[i].x));
-		bbox.min.x = glm::min(max.y, glm::max(bbox.max.y, vertices[i].y));
+		bbox.max.y = glm::min(max.y, glm::max(bbox.max.y, vertices[i].y));
 	}
 	return bbox;
 }

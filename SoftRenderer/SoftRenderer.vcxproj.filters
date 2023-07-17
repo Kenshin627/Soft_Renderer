@@ -24,7 +24,7 @@
     <ClCompile Include="src\renderer\Renderer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\model.cpp">
+    <ClCompile Include="src\model\model.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\renderer\FrameBuffer.cpp">
@@ -59,7 +59,7 @@
     <ClInclude Include="src\renderer\Renderer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\model.h">
+    <ClInclude Include="src\model\model.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\renderer\FrameBuffer.h">

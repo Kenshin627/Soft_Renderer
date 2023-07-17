@@ -22,7 +22,7 @@
     <ClCompile Include="src\camera\Camera.cpp" />
     <ClCompile Include="src\light\DirectionLight.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\model.cpp" />
+    <ClCompile Include="src\model\model.cpp" />
     <ClCompile Include="src\renderer\FrameBuffer.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
     <ClCompile Include="src\renderer\Triangle.cpp" />
@@ -35,7 +35,7 @@
   <ItemGroup>
     <ClInclude Include="src\camera\Camera.h" />
     <ClInclude Include="src\light\DirectionLight.h" />
-    <ClInclude Include="src\model.h" />
+    <ClInclude Include="src\model\model.h" />
     <ClInclude Include="src\renderer\FrameBuffer.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
     <ClInclude Include="src\renderer\Triangle.h" />
