@@ -35,6 +35,7 @@ public:
 	BoundingBox GetBoundingBox(const glm::vec4* vertices);
 	glm::vec3 BaryCentric(const glm::vec4* vertices, const glm::vec2& p);
 	void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+	void ComputeTBN(glm::vec3* positions, glm::vec2* uvs);
 private:
 	std::shared_ptr<Scene> activeScene;
 	std::unordered_map<ShaderType, std::shared_ptr<Shader>> shaderLibs;

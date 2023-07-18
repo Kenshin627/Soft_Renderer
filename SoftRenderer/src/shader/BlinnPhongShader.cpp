@@ -8,11 +8,19 @@ void BlinnPhongShader::Vertex(glm::vec4& gl_Position, const VertexAttribute& ver
 
 bool BlinnPhongShader::Fragment(glm::vec4& gl_FragColor)
 {
-	glm::vec3 worldPos = baryCentric.x * triangle.vertices[0].position + baryCentric.y * triangle.vertices[1].position + baryCentric.z * triangle.vertices[2].position;
-	
+	glm::vec2 uv = baryCentric.x * triangle.vertices[0].uv + baryCentric.y * triangle.vertices[1].uv + baryCentric.z * triangle.vertices[2].uv;
+	glm::vec3 worldPos = baryCentric.x * triangle.vertices[0].position + baryCentric.y * triangle.vertices[1].position + baryCentric.z * triangle.vertices[2].position;	
 	glm::vec3 worldNormal = glm::normalize(baryCentric.x * triangle.vertices[0].normal + baryCentric.y * triangle.vertices[1].normal + baryCentric.z * triangle.vertices[2].normal);
 
-	glm::vec2 uv = baryCentric.x * triangle.vertices[0].uv + baryCentric.y * triangle.vertices[1].uv + baryCentric.z * triangle.vertices[2].uv;
+	//构造TBN
+	glm::vec3 N = worldNormal;
+	glm::vec3 T = glm::normalize(glm::cross(biTangent, N));
+	glm::vec3 B = glm::normalize(glm::cross(N, tangent));
+	glm::mat3 TBN = {
+		T, B, N
+	};
+	glm::vec3 samplerN = glm::normalize(Sampler2D(uv, tbnNormalTexture)) * 2.0f - 1.0f;
+	glm::vec3 normal = glm::normalize(TBN * samplerN);
 
 	//光照方向取反，从像素出发
 	glm::vec3 lightDir = glm::normalize(-light->Direction());
@@ -20,13 +28,13 @@ bool BlinnPhongShader::Fragment(glm::vec4& gl_FragColor)
 	
 	//diffuse
 	glm::vec3 diffuseColor = Sampler2D(uv, diffuseTexture); //[0-1]
-	float diffuse = glm::max(0.0f, glm::dot(lightDir, worldNormal));
+	float diffuse = glm::max(0.0f, glm::dot(lightDir, normal));
 	diffuseColor = diffuse * diffuseColor;
 
 	//specular
 	glm::vec3 viewDir = glm::normalize(camPos - worldPos);
 	glm::vec3 h = glm::normalize((viewDir + lightDir));
-	float specular = glm::pow(glm::max(0.0f, glm::dot(h, worldNormal)), 64);
+	float specular = glm::pow(glm::max(0.0f, glm::dot(h, normal)), 128);
 	float samplerSpecular = Sampler2D(uv, specularTexture).b;//[0-1]
 	glm::vec3 specularColor = glm::vec3(samplerSpecular);
 	specularColor = specularColor * specular;

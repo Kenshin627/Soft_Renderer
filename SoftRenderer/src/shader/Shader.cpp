@@ -8,6 +8,8 @@ void Shader::SetSampler(uint32_t slot, const TGAImage& texture)
 		diffuseTexture = texture; break;
 	case 1:
 		specularTexture = texture; break;
+	case 2:
+		tbnNormalTexture = texture; break;
 	default:
 		break;
 	}

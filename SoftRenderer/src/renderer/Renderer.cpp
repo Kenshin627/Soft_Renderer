@@ -51,6 +51,8 @@ void Renderer::Draw(Window* winHandle)
 	activeShader->viewProjection = activeScene->GetCamera()->ViewProjection();
 	activeShader->camPos = activeScene->GetCamera()->Position();
 	glm::vec4 clipCoords[3];
+	glm::vec3 localPosition[3];
+	glm::vec2 uvs[3];
 	if (activeScene != nullptr)
 	{
 		const std::vector<Model>& models = activeScene->GetModels();
@@ -60,6 +62,7 @@ void Renderer::Draw(Window* winHandle)
 			const Model& model = models[i];
 			activeShader->SetSampler(0, model.diffuse());
 			activeShader->SetSampler(1, model.specular());
+			activeShader->SetSampler(2, model.normalMap());
 			uint32_t faces = model.nfaces();
 			for (uint32_t j = 0; j < faces; j++)
 			{
@@ -69,8 +72,11 @@ void Renderer::Draw(Window* winHandle)
 					glm::vec3 normal = glm::normalize(model.normal(j, k));
 					glm::vec2 uv = model.uv(j, k);
 					glm::vec4 gl_Position;
+					localPosition[k] = position;
+					uvs[k] = uv;
 					activeShader->Vertex(clipCoords[k], {position, normal, uv}, k);
 				}
+				ComputeTBN(localPosition, uvs);
 				Rasterize(clipCoords, winHandle);
 			}
 		}
@@ -152,4 +158,26 @@ glm::vec3 Renderer::BaryCentric(const glm::vec4* vertices, const glm::vec2& p)
 		return { -1, 1, 1 };
 	}
 	return { 1.0f - (uvw.x + uvw.y) / uvw.z, uvw.x / uvw.z, uvw.y / uvw.z };
+}
+
+void Renderer::ComputeTBN(glm::vec3* positions, glm::vec2* uvs)
+{
+	glm::vec3 e1 = positions[1] - positions[0];
+	glm::vec3 e2 = positions[2] - positions[0];
+	glm::vec2 deltaUV1 = uvs[1] - uvs[0];
+	glm::vec2 deltaUV2 = uvs[2] - uvs[0];
+	float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+	glm::vec3 tangent;
+	tangent.x = f * (deltaUV2.y * e1.x - deltaUV1.y * e2.x);
+	tangent.y = f * (deltaUV2.y * e1.y - deltaUV1.y * e2.y);
+	tangent.z = f * (deltaUV2.y * e1.z - deltaUV1.y * e2.z);
+	tangent = glm::normalize(tangent);
+
+	glm::vec3 bitangent;
+	bitangent.x = f * (-deltaUV2.x * e1.x + deltaUV1.x * e2.x);
+	bitangent.y = f * (-deltaUV2.x * e1.y + deltaUV1.x * e2.y);
+	bitangent.z = f * (-deltaUV2.x * e1.z + deltaUV1.x * e2.z);
+	bitangent = glm::normalize(bitangent);
+	activeShader->tangent = tangent;
+	activeShader->biTangent = bitangent;
 }

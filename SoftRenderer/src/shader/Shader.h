@@ -30,4 +30,9 @@ public:
 	//samplers
 	TGAImage diffuseTexture; //slot 0
 	TGAImage specularTexture;//slot 1
+	TGAImage tbnNormalTexture;//slot 2
+
+	//TBN
+	glm::vec3 tangent;
+	glm::vec3 biTangent;
 };
