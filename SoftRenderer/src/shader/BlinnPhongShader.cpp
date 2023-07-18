@@ -17,7 +17,27 @@ bool BlinnPhongShader::Fragment(glm::vec4& gl_FragColor)
 	//光照方向取反，从像素出发
 	glm::vec3 lightDir = glm::normalize(-light->Direction());
 	glm::vec3 lightColor = light->Color();
-	float intensity = glm::max(0.0f, glm::dot(lightDir, worldNormal));
-	gl_FragColor = { intensity * lightColor.x, intensity * lightColor.y, intensity * lightColor.z, 255 };
+	
+	//diffuse
+	glm::vec3 diffuseColor = Sampler2D(uv, diffuseTexture); //[0-1]
+	float diffuse = glm::max(0.0f, glm::dot(lightDir, worldNormal));
+	diffuseColor = diffuse * diffuseColor;
+
+	//specular
+	glm::vec3 viewDir = glm::normalize(camPos - worldPos);
+	glm::vec3 h = glm::normalize((viewDir + lightDir));
+	float specular = glm::pow(glm::max(0.0f, glm::dot(h, worldNormal)), 64);
+	float samplerSpecular = Sampler2D(uv, specularTexture).b;//[0-1]
+	glm::vec3 specularColor = glm::vec3(samplerSpecular);
+	specularColor = specularColor * specular;
+
+	//ambient
+	glm::vec3 ambientColor = glm::vec3(0.01);
+
+	glm::vec3 color = (diffuseColor + specularColor + ambientColor) * lightColor;
+	color.r = glm::min(1.0f, color.r);
+	color.g = glm::min(1.0f, color.g);
+	color.b = glm::min(1.0f, color.b);
+	gl_FragColor = { color, 1.0f };
 	return false;
 }

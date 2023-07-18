@@ -49,6 +49,7 @@ void Renderer::Draw(Window* winHandle)
 	activeShader->model = glm::identity<glm::mat4>();
 	activeShader->itModel = glm::mat3(glm::transpose(glm::inverse(activeShader->model)));
 	activeShader->viewProjection = activeScene->GetCamera()->ViewProjection();
+	activeShader->camPos = activeScene->GetCamera()->Position();
 	glm::vec4 clipCoords[3];
 	if (activeScene != nullptr)
 	{
@@ -105,9 +106,8 @@ void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle)
 				activeShader->baryCentric = { depth * clipped_bc.x / beforeClippedCoords[0].z, depth * clipped_bc.y / beforeClippedCoords[1].z, depth * clipped_bc.z / beforeClippedCoords[2].z };				
 				glm::vec4 gl_FragColor;
 				if (!activeShader->Fragment(gl_FragColor))
-				{
-					//draw...
-					windHandle->DrawPoint(p.x, p.y, glm::vec3(gl_FragColor));
+				{					
+					windHandle->DrawPoint(p.x, p.y, glm::vec3(gl_FragColor) * 255.0f);
 					frameBuffer->zBuffer[pixelIndex] = depth;
 				}
 			}

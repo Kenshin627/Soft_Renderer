@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 	//1.Scene
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 	scene->LoadModel("resource/models/head/head/african_head.obj");
-	scene->InitLight({ -1, -1, -1 }, { 255, 255, 255 });
+	scene->InitLight({ -1, -1, -1 }, { 1, 1, 1 });
 	scene->InitCamera({ 1,1,3 }, { 0, 0, 0 }, { 0, 1, 0 }, 1.0f / glm::four_over_pi<float>(), aspect, 0.01f, 10.0f);
 	Renderer renderer;
 	renderer.InitShaders();
