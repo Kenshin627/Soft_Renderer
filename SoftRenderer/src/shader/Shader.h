@@ -1,6 +1,7 @@
 #pragma once
 #include "../renderer/Triangle.h"
 #include "../light/DirectionLight.h"
+#include "../renderer/FrameBuffer.h"
 #include <memory>
 #include <glm/glm.hpp>
 #include <tgaimage/tgaimage.h>
@@ -8,7 +9,9 @@
 enum ShaderType
 {
 	BlinnPhong = 0,
-	Toon
+	Toon,
+	Shadow,
+	BlinnPhongWithShadow
 };
 
 class Shader
@@ -35,4 +38,8 @@ public:
 	//TBN
 	glm::vec3 tangent;
 	glm::vec3 biTangent;
+
+	//shadowMap
+	std::shared_ptr<FrameBuffer> shadowBuffer;
+	glm::mat4 viewport;
 };

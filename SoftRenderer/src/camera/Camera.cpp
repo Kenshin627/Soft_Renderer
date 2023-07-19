@@ -1,7 +1,11 @@
 #include "Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up, float fov, float aspect, float near, float far):position(eye)
+Camera::Camera(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up):
+	position(eye),
+	view(glm::identity<glm::mat4>()), 
+	projection(glm::identity<glm::mat4>()),
+	viewProjection(glm::identity<glm::mat4>())
 {
 	glm::vec3 z = glm::normalize(eye - center);
 	glm::vec3 y = glm::normalize(up);
@@ -24,7 +28,6 @@ Camera::Camera(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& u
 		{ eye.x, eye.y, eye.z, 1 }
 	};
 	
-	
 	//TODO: view matrix = cameraTranlation * cameraRotation)^-1 = cameraRotation^-1 * cameraTranslation^-1 = cameraRotation^T * cameraTranslation^-1
 	glm::mat4 cameraRotationInvert = {
 		{ x.x, y.x, z.x, 0 },
@@ -39,9 +42,17 @@ Camera::Camera(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& u
 		{ -eye.x, -eye.y, -eye.z, 1 }
 	};
 	view = cameraRotationInvert * cameraTranslationInvert;
+}
 
+void Camera::Perspective(float fov, float aspect, float near, float far)
+{
 	projection = glm::perspective(fov, aspect, near, far);
-	//column matrix
+	viewProjection = projection * view;
+}
+
+void Camera::OrthoGraphic(float left, float right, float bottom, float top, float near, float far)
+{
+	projection = glm::ortho(left, right, bottom, top, near, far);
 	viewProjection = projection * view;
 }
 

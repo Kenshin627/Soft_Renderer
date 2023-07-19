@@ -1,6 +1,8 @@
 #include "Renderer.h"
 #include "Triangle.h"
 #include "../shader/BlinnPhongShader.h"
+#include "../shader/ShadowShader.h"
+#include "../shader//BlinnPhongWithShadowShader.h"
 #include "../window/Window.h"
 
 Renderer::Renderer() { }
@@ -8,6 +10,8 @@ Renderer::Renderer() { }
 void Renderer::InitShaders()
 {
 	shaderLibs.insert({ ShaderType::BlinnPhong, std::make_shared<BlinnPhongShader>() });
+	shaderLibs.insert({ ShaderType::Shadow, std::make_shared<ShadowShader>() });
+	shaderLibs.insert({ ShaderType::BlinnPhongWithShadow, std::make_shared<BlinnPhongWithShadowShader>() });
 }
 
 void Renderer::BindShader(ShaderType type)
@@ -39,10 +43,47 @@ void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t heig
 		{ 0, 0, 1, 0 },
 		{ width / 2 + x, height / 2 + y, 0, 1 }
 	};
-	frameBuffer = std::make_unique<FrameBuffer>(width, height);
+	defaultPassFrameBuffer = std::make_unique<FrameBuffer>(width, height);
+	shadowPassFrameBuffer = std::make_unique<FrameBuffer>(width, height);
 }
 
-void Renderer::Draw(Window* winHandle)
+void Renderer::ShadowPass(Window* winHandle)
+{
+	BindShader(ShaderType::Shadow);
+	activeShader->light = activeScene->GetLight();
+	activeShader->model = glm::identity<glm::mat4>();
+	activeShader->itModel = glm::transpose(glm::inverse(activeShader->model));
+	activeShader->viewProjection = activeScene->GetLight()->GetLightSpace().ViewProjection();
+	glm::vec4 clipCoords[3];
+	glm::vec3 localCoords[3];
+	glm::vec2 uvs[3];
+	if (activeScene != nullptr)
+	{
+		const std::vector<Model>& models = activeScene->GetModels();
+		uint32_t modelCount = models.size();
+		for (uint32_t i = 0; i < modelCount; i++)
+		{
+			const Model& model = models[i];
+			uint32_t nface = model.nfaces();
+			for (uint32_t j = 0; j < nface; j++)
+			{
+				for (uint32_t k = 0; k < 3; k++) 
+				{
+					const glm::vec3& pos = model.vert(j, k);
+					const glm::vec3& normal = model.normal(j, k);
+					const glm::vec2& uv = model.uv(j, k);
+					localCoords[k] = pos;
+					uvs[k] = uv;
+					VertexAttribute vertex{ pos, normal, uv };
+					activeShader->Vertex(clipCoords[k], vertex, k);
+				}
+				Rasterize(clipCoords, winHandle, shadowPassFrameBuffer, false);
+			}
+		}
+	}
+}
+
+void Renderer::DefaultPass(Window* winHandle)
 {
 	BindShader(ShaderType::BlinnPhong);
 	activeShader->light = activeScene->GetLight();
@@ -50,6 +91,8 @@ void Renderer::Draw(Window* winHandle)
 	activeShader->itModel = glm::mat3(glm::transpose(glm::inverse(activeShader->model)));
 	activeShader->viewProjection = activeScene->GetCamera()->ViewProjection();
 	activeShader->camPos = activeScene->GetCamera()->Position();
+	activeShader->shadowBuffer = shadowPassFrameBuffer;
+	activeShader->viewport = viewport.transform;
 	glm::vec4 clipCoords[3];
 	glm::vec3 localPosition[3];
 	glm::vec2 uvs[3];
@@ -66,29 +109,35 @@ void Renderer::Draw(Window* winHandle)
 			uint32_t faces = model.nfaces();
 			for (uint32_t j = 0; j < faces; j++)
 			{
-				for (uint32_t k = 0; k < 3; k++) 
+				for (uint32_t k = 0; k < 3; k++)
 				{
 					glm::vec3 position = model.vert(j, k);
 					glm::vec3 normal = glm::normalize(model.normal(j, k));
 					glm::vec2 uv = model.uv(j, k);
-					glm::vec4 gl_Position;
 					localPosition[k] = position;
 					uvs[k] = uv;
-					activeShader->Vertex(clipCoords[k], {position, normal, uv}, k);
+					activeShader->Vertex(clipCoords[k], { position, normal, uv }, k);
 				}
 				ComputeTBN(localPosition, uvs);
-				Rasterize(clipCoords, winHandle);
+				Rasterize(clipCoords, winHandle, defaultPassFrameBuffer);
 			}
 		}
 	}
 }
 
-void Renderer::Clear()
+void Renderer::Draw(Window* winHandle)
 {
-	frameBuffer->Reset();
+	//ShadowPass(winHandle);
+	DefaultPass(winHandle);
 }
 
-void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle)
+void Renderer::Clear()
+{
+	defaultPassFrameBuffer->Reset();
+	shadowPassFrameBuffer->Reset();
+}
+
+void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle, std::shared_ptr<FrameBuffer>& currentBuffer, bool present)
 {
 	glm::vec4 beforeClippedCoords[3] = { viewport.transform * vertices[0], viewport.transform * vertices[1], viewport.transform * vertices[2] };
 	glm::vec4 afterClippedCoords[3] = { beforeClippedCoords[0] / beforeClippedCoords[0].w, beforeClippedCoords[1] / beforeClippedCoords[1].w,beforeClippedCoords[2] / beforeClippedCoords[2].w };
@@ -106,15 +155,18 @@ void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle)
 			// 1/z = u/z0 + v/z1 + w/z2;
 			float depth = 1.0 / (clipped_bc.x / beforeClippedCoords[0].z + clipped_bc.y / beforeClippedCoords[1].z + clipped_bc.z / beforeClippedCoords[2].z);
 			
-			uint32_t pixelIndex = x + y * viewport.height;
-			if (depth < frameBuffer->zBuffer[pixelIndex])
+			uint32_t pixelIndex = x + y * viewport.width;
+			if (depth < currentBuffer->zBuffer[pixelIndex])
 			{
 				activeShader->baryCentric = { depth * clipped_bc.x / beforeClippedCoords[0].z, depth * clipped_bc.y / beforeClippedCoords[1].z, depth * clipped_bc.z / beforeClippedCoords[2].z };				
 				glm::vec4 gl_FragColor;
 				if (!activeShader->Fragment(gl_FragColor))
-				{					
-					windHandle->DrawPoint(p.x, p.y, glm::vec3(gl_FragColor) * 255.0f);
-					frameBuffer->zBuffer[pixelIndex] = depth;
+				{	
+					if (present)
+					{
+						windHandle->DrawPoint(p.x, p.y, glm::vec3(gl_FragColor) * 255.0f);
+					}
+					currentBuffer->zBuffer[pixelIndex] = depth;
 				}
 			}
 		}

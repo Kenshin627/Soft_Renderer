@@ -9,9 +9,10 @@
 class Window;
 struct Viewport
 {
-	uint32_t width;
-	uint32_t height;
-	glm::mat4 transform;
+	Viewport() = default;
+	uint32_t width = 0;
+	uint32_t height = 0;
+	glm::mat4 transform = glm::identity<glm::mat4>();
 };
 
 struct BoundingBox
@@ -30,8 +31,10 @@ public:
 	void BeginScene(const std::shared_ptr<Scene>& scene);
 	void EndScene();
 	void Draw(Window* winHandle);
+	void ShadowPass(Window* winHandle);
+	void DefaultPass(Window* winHandle);
 	void Clear();
-	void Rasterize(glm::vec4* vertices, Window* winHandle);
+	void Rasterize(glm::vec4* vertices, Window* winHandle, std::shared_ptr<FrameBuffer>& currentBuffer, bool present = true);
 	BoundingBox GetBoundingBox(const glm::vec4* vertices);
 	glm::vec3 BaryCentric(const glm::vec4* vertices, const glm::vec2& p);
 	void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
@@ -40,6 +43,7 @@ private:
 	std::shared_ptr<Scene> activeScene;
 	std::unordered_map<ShaderType, std::shared_ptr<Shader>> shaderLibs;
 	std::shared_ptr<Shader> activeShader;
-	Viewport viewport;
-	std::unique_ptr<FrameBuffer> frameBuffer;
+	Viewport viewport = Viewport();
+	std::shared_ptr<FrameBuffer> defaultPassFrameBuffer;
+	std::shared_ptr<FrameBuffer> shadowPassFrameBuffer;
 };
