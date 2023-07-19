@@ -1,6 +1,7 @@
+#include "model.h"
 #include <iostream>
 #include <sstream>
-#include "model.h"
+#include <fstream>
 
 Model::Model(const std::string filename) {
     std::ifstream in;
@@ -46,9 +47,9 @@ Model::Model(const std::string filename) {
         }
     }
     std::cerr << "# v# " << nverts() << " f# " << nfaces() << " vt# " << tex_coord.size() << " vn# " << norms.size() << std::endl;
-    load_texture(filename, "_diffuse.tga", diffusemap);
-    load_texture(filename, "_nm_tangent.tga", normalmap);
-    load_texture(filename, "_spec.tga", specularmap);
+    load_texture(filename, "_diffuse.jpg", diffusemap);
+    load_texture(filename, "_nm_tangent.png", normalmap);
+    load_texture(filename, "_spec.jpg", specularmap);
 }
 
 int Model::nverts() const {
@@ -67,11 +68,11 @@ glm::vec3 Model::vert(const int iface, const int nthvert) const {
     return verts[facet_vrt[iface * 3 + nthvert]];
 }
 
-void Model::load_texture(std::string filename, const std::string suffix, TGAImage& img) {
+void Model::load_texture(std::string filename, const std::string suffix, Texture& texture) {
     size_t dot = filename.find_last_of(".");
     if (dot == std::string::npos) return;
     std::string texfile = filename.substr(0, dot) + suffix;
-    std::cerr << "texture file " << texfile << " loading " << (img.read_tga_file(texfile.c_str()) ? "ok" : "failed") << std::endl;
+    texture = Texture(texfile.c_str());
 }
 
 glm::vec2 Model::uv(const int iface, const int nthvert) const {

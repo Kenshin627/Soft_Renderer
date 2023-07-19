@@ -1,9 +1,9 @@
 #pragma once
+#include "../texture/Texture.h"
 #include <vector>
 #include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "tgaimage/tgaimage.h"
 
 class Model {
     std::vector<glm::vec3> verts{};     // array of vertices
@@ -12,10 +12,10 @@ class Model {
     std::vector<int> facet_vrt{};
     std::vector<int> facet_tex{};  // per-triangle indices in the above arrays
     std::vector<int> facet_nrm{};
-    TGAImage diffusemap{};         // diffuse color texture
-    TGAImage normalmap{};          // normal map texture
-    TGAImage specularmap{};        // specular map texture
-    void load_texture(const std::string filename, const std::string suffix, TGAImage& img);
+    Texture diffusemap;         // diffuse color texture
+    Texture normalmap;          // normal map texture
+    Texture specularmap;        // specular map texture
+    void load_texture(const std::string filename, const std::string suffix, Texture& texture);
 public:
     Model(const std::string filename);
     int nverts() const;
@@ -25,8 +25,8 @@ public:
     glm::vec3 vert(const int i) const;
     glm::vec3 vert(const int iface, const int nthvert) const;
     glm::vec2 uv(const int iface, const int nthvert) const;
-    const TGAImage& diffuse()  const { return diffusemap; }
-    const TGAImage& specular() const { return specularmap; }
-    const TGAImage& normalMap() const { return normalmap; }
+    const Texture& diffuse()  const { return diffusemap; }
+    const Texture& specular() const { return specularmap; }
+    const Texture& normalMap() const { return normalmap; }
     glm::mat4 modelMatrix = glm::identity<glm::mat4>();
 };
