@@ -22,6 +22,8 @@
     <ClCompile Include="src\camera\Camera.cpp" />
     <ClCompile Include="src\light\DirectionLight.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\model2\Model2.cpp" />
+    <ClCompile Include="src\model2\ModelLoader.cpp" />
     <ClCompile Include="src\model\model.cpp" />
     <ClCompile Include="src\renderer\FrameBuffer.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
@@ -35,10 +37,13 @@
     <ClCompile Include="src\window\Window.cpp" />
     <ClCompile Include="vendor\stbimage\stb_image.cpp" />
     <ClCompile Include="vendor\tgaimage\tgaimage.cpp" />
+    <ClCompile Include="vendor\tinyobjloader\tinyobjloader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\camera\Camera.h" />
     <ClInclude Include="src\light\DirectionLight.h" />
+    <ClInclude Include="src\model2\Model2.h" />
+    <ClInclude Include="src\model2\ModelLoader.h" />
     <ClInclude Include="src\model\model.h" />
     <ClInclude Include="src\renderer\FrameBuffer.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
@@ -52,6 +57,7 @@
     <ClInclude Include="src\window\Window.h" />
     <ClInclude Include="vendor\stbimage\stb_image.h" />
     <ClInclude Include="vendor\tgaimage\tgaimage.h" />
+    <ClInclude Include="vendor\tinyobjloader\tinyobjloader.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

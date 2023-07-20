@@ -47,9 +47,9 @@ Model::Model(const std::string filename) {
         }
     }
     std::cerr << "# v# " << nverts() << " f# " << nfaces() << " vt# " << tex_coord.size() << " vn# " << norms.size() << std::endl;
-    load_texture(filename, "_diffuse.jpg", diffusemap);
-    load_texture(filename, "_nm_tangent.png", normalmap);
-    load_texture(filename, "_spec.jpg", specularmap);
+    load_texture(filename, "_diffuse.tga", diffusemap);
+    load_texture(filename, "_nm_tangent.tga", normalmap);
+    load_texture(filename, "_spec.tga", specularmap);
 }
 
 int Model::nverts() const {
@@ -68,11 +68,11 @@ glm::vec3 Model::vert(const int iface, const int nthvert) const {
     return verts[facet_vrt[iface * 3 + nthvert]];
 }
 
-void Model::load_texture(std::string filename, const std::string suffix, Texture& texture) {
+void Model::load_texture(const std::string& filename, const std::string& suffix, std::shared_ptr<Texture>& texture) {
     size_t dot = filename.find_last_of(".");
     if (dot == std::string::npos) return;
     std::string texfile = filename.substr(0, dot) + suffix;
-    texture = Texture(texfile.c_str());
+    texture = std::make_shared<Texture>(texfile.c_str());
 }
 
 glm::vec2 Model::uv(const int iface, const int nthvert) const {

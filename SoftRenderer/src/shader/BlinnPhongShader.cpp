@@ -3,7 +3,7 @@
 void BlinnPhongShader::Vertex(glm::vec4& gl_Position, const VertexAttribute& vertex, uint32_t vertexIndex)
 {
 	triangle.vertices[vertexIndex] = { model * glm::vec4(vertex.position, 1.0), glm::normalize(itModel * vertex.normal), vertex.uv };
-	gl_Position = viewProjection * model * glm::vec4(vertex.position.x, vertex.position.y, vertex.position.z, 1.0);
+	gl_Position = viewProjection * model * glm::vec4(vertex.position, 1.0);
 }
 
 bool BlinnPhongShader::Fragment(glm::vec4& gl_FragColor)
@@ -14,8 +14,8 @@ bool BlinnPhongShader::Fragment(glm::vec4& gl_FragColor)
 
 	//ππ‘ÏTBN
 	glm::vec3 N = worldNormal;
-	glm::vec3 T = glm::normalize(glm::cross(biTangent, N));
-	glm::vec3 B = glm::normalize(glm::cross(N, tangent));
+	glm::vec3 T = glm::normalize(glm::cross(itModel * biTangent, N));
+	glm::vec3 B = glm::normalize(glm::cross(N, itModel * tangent));
 	glm::mat3 TBN = {
 		T, B, N
 	};
@@ -34,13 +34,13 @@ bool BlinnPhongShader::Fragment(glm::vec4& gl_FragColor)
 	//specular
 	glm::vec3 viewDir = glm::normalize(camPos - worldPos);
 	glm::vec3 h = glm::normalize((viewDir + lightDir));
-	float specular = glm::pow(glm::max(0.0f, glm::dot(h, normal)), 128);
+	float specular = glm::pow(glm::max(0.0f, glm::dot(h, normal)), 32);
 	float samplerSpecular = Sampler2D(uv, specularTexture).b;//[0-1]
 	glm::vec3 specularColor = glm::vec3(samplerSpecular);
 	specularColor = specularColor * specular;
 
 	//ambient
-	glm::vec3 ambientColor = glm::vec3(0.01);
+	glm::vec3 ambientColor = glm::vec3(0.08f);
 
 	glm::vec3 color = (diffuseColor + specularColor + ambientColor) * lightColor;
 	color.r = glm::min(1.0f, color.r);

@@ -2,7 +2,8 @@
 
 Texture::Texture(const char* path)
 {
-	data = stbi_load(path, &width, &height, &bytePerPixel, STBI_rgb);
+	//stbi_set_flip_vertically_on_load(true);
+	data = stbi_load(path, &width, &height, &bytePerPixel, 0);
 }
 
 Texture::~Texture()
@@ -21,4 +22,5 @@ Texture::~Texture()
 	unsigned char g = pixelOffset[1];
 	unsigned char b = pixelOffset[2];
 	unsigned char a = bytePerPixel == 4 ? pixelOffset[3] : 0xff;
+	return { r, g, b, a };
 }

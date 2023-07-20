@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-void Shader::SetSampler(uint32_t slot, const Texture& texture)
+void Shader::SetSampler(uint32_t slot, const std::shared_ptr<Texture>& texture)
 {
 	switch (slot)
 	{
@@ -15,8 +15,8 @@ void Shader::SetSampler(uint32_t slot, const Texture& texture)
 	}
 }
 
-glm::vec3 Shader::Sampler2D(const glm::vec2& uv, const Texture& texture)
+glm::vec3 Shader::Sampler2D(const glm::vec2& uv, const std::shared_ptr<Texture>& texture)
 {
-	glm::vec4 color = texture.Get(uv.x * (texture.GetWidth() - 1.0f), uv.y * (texture.GetHeight() - 1.0f));
+	glm::vec4 color = texture->Get(uv.x * (texture->GetWidth() - 1.0f), uv.y * (texture->GetHeight() - 1.0f));
 	return glm::vec3(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f);
 }
