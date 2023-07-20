@@ -72,6 +72,9 @@
     <ClCompile Include="src\model2\Model2.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\model2\Primative.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\window\Window.h">
@@ -126,6 +129,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\model2\Model2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model2\Primative.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
