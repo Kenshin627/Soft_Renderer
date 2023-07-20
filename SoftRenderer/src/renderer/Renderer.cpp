@@ -1,14 +1,16 @@
 #include "Renderer.h"
 #include "Triangle.h"
+#include "../window/Window.h"
+#include "../shader/GouraudShader.h"
 #include "../shader/BlinnPhongShader.h"
 #include "../shader/ShadowShader.h"
 #include "../shader//BlinnPhongWithShadowShader.h"
-#include "../window/Window.h"
 
 Renderer::Renderer() { }
 
 void Renderer::InitShaders()
 {
+	shaderLibs.insert({ ShaderType::Gouraud, std::make_shared< GouraudShader>() });
 	shaderLibs.insert({ ShaderType::BlinnPhong, std::make_shared<BlinnPhongShader>() });
 	shaderLibs.insert({ ShaderType::Shadow, std::make_shared<ShadowShader>() });
 	shaderLibs.insert({ ShaderType::BlinnPhongWithShadow, std::make_shared<BlinnPhongWithShadowShader>() });
@@ -59,33 +61,38 @@ void Renderer::ShadowPass(Window* winHandle)
 	glm::vec2 uvs[3];
 	if (activeScene != nullptr)
 	{
-		const std::vector<Model>& models = activeScene->GetModels();
+		const std::vector<Model2>& models = activeScene->GetModels();
 		uint32_t modelCount = models.size();
 		for (uint32_t i = 0; i < modelCount; i++)
 		{
-			const Model& model = models[i];
-			uint32_t nface = model.nfaces();
-			for (uint32_t j = 0; j < nface; j++)
+			const Model2& model = models[i];
+			const std::vector<Primative> primatives = model.GetAllPrimatives();
+			for (uint32_t p = 0; p < primatives.size(); p++)
 			{
-				for (uint32_t k = 0; k < 3; k++) 
+				const Primative& primative = primatives[p];
+				uint32_t nface = primative.getNface();
+				for (uint32_t j = 0; j < nface; j++)
 				{
-					const glm::vec3& pos = model.vert(j, k);
-					const glm::vec3& normal = model.normal(j, k);
-					const glm::vec2& uv = model.uv(j, k);
-					localCoords[k] = pos;
-					uvs[k] = uv;
-					VertexAttribute vertex{ pos, normal, uv };
-					activeShader->Vertex(clipCoords[k], vertex, k);
+					for (uint32_t k = 0; k < 3; k++)
+					{
+						const glm::vec3& pos = primative.GetPosition(j, k);
+						const glm::vec3& normal = primative.GetNormal(j, k);
+						const glm::vec2& uv = primative.GetUV(j, k);
+						localCoords[k] = pos;
+						uvs[k] = uv;
+						VertexAttribute vertex{ pos, normal, uv };
+						activeShader->Vertex(clipCoords[k], vertex, k);
+					}
+					Rasterize(clipCoords, winHandle, shadowPassFrameBuffer, false);
 				}
-				Rasterize(clipCoords, winHandle, shadowPassFrameBuffer, false);
-			}
+			}			
 		}
 	}
 }
 
 void Renderer::DefaultPass(Window* winHandle)
 {
-	BindShader(ShaderType::BlinnPhong);
+	BindShader(ShaderType::Gouraud);
 	activeShader->light = activeScene->GetLight();
 	activeShader->model = glm::identity<glm::mat4>();
 	activeShader->itModel = glm::mat3(glm::transpose(glm::inverse(activeShader->model)));
@@ -98,29 +105,35 @@ void Renderer::DefaultPass(Window* winHandle)
 	glm::vec2 uvs[3];
 	if (activeScene != nullptr)
 	{
-		const std::vector<Model>& models = activeScene->GetModels();
+		const std::vector<Model2>& models = activeScene->GetModels();
 		uint32_t modelCount = models.size();
 		for (uint32_t i = 0; i < modelCount; i++)
 		{
-			const Model& model = models[i];
-			activeShader->SetSampler(0, model.diffuse());
-			activeShader->SetSampler(1, model.specular());
-			activeShader->SetSampler(2, model.normalMap());
-			uint32_t faces = model.nfaces();
-			for (uint32_t j = 0; j < faces; j++)
+			const Model2& model = models[i];
+			const std::vector<Primative>& primatives = model.GetAllPrimatives();
+			uint32_t primativeCount = primatives.size();
+			for (uint32_t p = 0; p < primativeCount; p++)
 			{
-				for (uint32_t k = 0; k < 3; k++)
+				const Primative& primative = primatives[p];
+				uint32_t nface = primative.getNface();
+				/*activeShader->SetSampler(0, model.diffuse());
+				activeShader->SetSampler(1, model.specular());
+				activeShader->SetSampler(2, model.normalMap());*/
+				for (uint32_t j = 0; j < nface; j++)
 				{
-					glm::vec3 position = model.vert(j, k);
-					glm::vec3 normal = glm::normalize(model.normal(j, k));
-					glm::vec2 uv = model.uv(j, k);
-					localPosition[k] = position;
-					uvs[k] = uv;
-					activeShader->Vertex(clipCoords[k], { position, normal, uv }, k);
+					for (uint32_t k = 0; k < 3; k++)
+					{
+						const glm::vec3& position = primative.GetPosition(j, k);
+						const glm::vec3& normal = primative.GetNormal(j, k);
+						const glm::vec2& uv = primative.GetUV(j, k);
+						localPosition[k] = position;
+						uvs[k] = uv;
+						activeShader->Vertex(clipCoords[k], { position, normal, uv }, k);
+					}
+					ComputeTBN(localPosition, uvs);
+					Rasterize(clipCoords, winHandle, defaultPassFrameBuffer);
 				}
-				ComputeTBN(localPosition, uvs);
-				Rasterize(clipCoords, winHandle, defaultPassFrameBuffer);
-			}
+			}			
 		}
 	}
 }
@@ -129,6 +142,39 @@ void Renderer::Draw(Window* winHandle)
 {
 	//ShadowPass(winHandle);
 	DefaultPass(winHandle);
+}
+
+void Renderer::DrawLine(Window* winHandle)
+{
+	if (activeScene != nullptr)
+	{
+		const std::vector<Model2>& models = activeScene->GetModels();
+		uint32_t modelCount = models.size();
+		for (uint32_t i = 0; i < modelCount; i++)
+		{
+			const Model2& model = models[i];
+			const std::vector<Primative> primatives = model.GetAllPrimatives();
+			uint32_t primativeCount = primatives.size();
+			for (uint32_t p = 0; p < primativeCount; p++)
+			{
+				const Primative& primative = primatives[p];
+				uint32_t nface = primative.getNface();
+				for (uint32_t j = 0; j < nface; j++)
+				{
+					for (uint32_t k = 0; k < 3; k++)
+					{
+						const glm::vec3& v0 = primative.GetPosition(j, k);
+						const glm::vec3& v1 = primative.GetPosition(j, (k + 1) % 3);
+						int x0 = (v0.x + 1.) * viewport.width / 2.;
+						int y0 = (v0.y + 1.) * viewport.height / 2.;
+						int x1 = (v1.x + 1.) * viewport.width / 2.;
+						int y1 = (v1.y + 1.) * viewport.height / 2.;
+						BresenhamLine(x0, y0, x1, y1, { 255, 255, 255 }, winHandle);
+					}
+				}
+			}
+		}
+	}
 }
 
 void Renderer::Clear()
@@ -232,4 +278,44 @@ void Renderer::ComputeTBN(glm::vec3* positions, glm::vec2* uvs)
 	bitangent = glm::normalize(bitangent);
 	activeShader->tangent = tangent;
 	activeShader->biTangent = bitangent;
+}
+
+void Renderer::BresenhamLine(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, const glm::vec3& color, Window* winHandle)
+{
+	bool steep = false;
+	if (abs(static_cast<int>(x1 - x0)) < abs(static_cast<int>(y1 - y0)))
+	{
+		std::swap(x0, y0);
+		std::swap(x1, y1);
+		steep = true;
+	}
+
+	if (x0 > x1)
+	{
+		std::swap(x0, x1);
+		std::swap(y0, y1);
+	}
+
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+	int derror2 = std::abs(dy) * 2;
+	int error2 = 0;
+	int y = y0;
+	for (uint32_t x = x0; x <= x1; x++)
+	{
+		if (steep)
+		{
+			winHandle->DrawPoint(y, x, color);
+		}
+		else
+		{
+			winHandle->DrawPoint(x, y, color);
+		}
+		error2 += derror2;
+		if (error2 > dx)
+		{
+			y += (y1 > y0 ? 1 : -1);
+			error2 -= dx * 2;
+		}
+	}
 }

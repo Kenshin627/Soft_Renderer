@@ -27,6 +27,7 @@
     <ClCompile Include="src\model2\Primative.cpp" />
     <ClCompile Include="src\model\model.cpp" />
     <ClCompile Include="src\renderer\FrameBuffer.cpp" />
+    <ClCompile Include="src\shader\GouraudShader.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
     <ClCompile Include="src\renderer\Triangle.cpp" />
     <ClCompile Include="src\scene\Scene.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="src\model2\Primative.h" />
     <ClInclude Include="src\model\model.h" />
     <ClInclude Include="src\renderer\FrameBuffer.h" />
+    <ClInclude Include="src\shader\GouraudShader.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
     <ClInclude Include="src\renderer\Triangle.h" />
     <ClInclude Include="src\scene\Scene.h" />

@@ -8,7 +8,8 @@
 
 enum ShaderType
 {
-	BlinnPhong = 0,
+	Gouraud = 0,
+	BlinnPhong,
 	Toon,
 	Shadow,
 	BlinnPhongWithShadow
@@ -34,6 +35,9 @@ public:
 	std::shared_ptr<Texture> diffuseTexture; //slot 0
 	std::shared_ptr<Texture> specularTexture;//slot 1
 	std::shared_ptr<Texture> tbnNormalTexture;//slot 2
+
+	//baseColor
+	glm::vec3 baseColor = { 255, 255, 255 };
 
 	//TBN
 	glm::vec3 tangent;
