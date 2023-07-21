@@ -13,6 +13,7 @@ enum ShaderType
 	WireFrame,
 	BlinnPhong,
 	Toon,
+	PBR,
 	Shadow,
 	BlinnPhongWithShadow
 };
@@ -37,6 +38,10 @@ public:
 	std::shared_ptr<Texture> diffuseTexture; //slot 0
 	std::shared_ptr<Texture> specularTexture;//slot 1
 	std::shared_ptr<Texture> tbnNormalTexture;//slot 2
+	std::shared_ptr<Texture> aoTexture;//slot 3
+	std::shared_ptr<Texture> roughnessTexture;//slot 4
+	std::shared_ptr<Texture> metalnessTexture;//slot 5
+
 
 	//baseColor
 	glm::vec3 baseColor = { 1, 1, 1 };

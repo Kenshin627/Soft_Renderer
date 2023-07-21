@@ -84,6 +84,12 @@
     <ClCompile Include="src\shader\WireFrameShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\material\Material.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader\PbrShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\window\Window.h">
@@ -150,6 +156,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\shader\WireFrameShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\material\Material.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\PbrShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -32,12 +32,20 @@ bool BlinnPhongShader::Fragment(glm::vec4& gl_FragColor)
 	diffuseColor = diffuse * diffuseColor;
 
 	//specular
+	glm::vec3 specularColor;
 	glm::vec3 viewDir = glm::normalize(camPos - worldPos);
 	glm::vec3 h = glm::normalize((viewDir + lightDir));
 	float specular = glm::pow(glm::max(0.0f, glm::dot(h, normal)), 32);
-	float samplerSpecular = Sampler2D(uv, specularTexture).b;//[0-1]
-	glm::vec3 specularColor = glm::vec3(samplerSpecular);
-	specularColor = specularColor * specular;
+	if (specularTexture != nullptr)
+	{		
+		float samplerSpecular = Sampler2D(uv, specularTexture).b;//[0-1]
+		specularColor = glm::vec3(samplerSpecular);
+		specularColor = specularColor * specular;
+	}
+	else {
+		specularColor = glm::vec3(specular);
+	}
+	
 
 	//ambient
 	glm::vec3 ambientColor = glm::vec3(0.08f);

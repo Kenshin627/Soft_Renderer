@@ -5,6 +5,7 @@
 #include "../shader/PixelShader.h"
 #include "../shader/WireFrameShader.h"
 #include "../shader/BlinnPhongShader.h"
+#include "../shader/PbrShader.h"
 #include "../shader/ShadowShader.h"
 #include "../shader//BlinnPhongWithShadowShader.h"
 
@@ -16,6 +17,7 @@ void Renderer::InitShaders()
 	shaderLibs.insert({ ShaderType::Pixel, std::make_shared<PixelShader>() });
 	shaderLibs.insert({ ShaderType::WireFrame, std::make_shared<WireFrameShader>(0.02) });
 	shaderLibs.insert({ ShaderType::BlinnPhong, std::make_shared<BlinnPhongShader>() });
+	shaderLibs.insert({ ShaderType::PBR, std::make_shared<PbrShader>() });
 	shaderLibs.insert({ ShaderType::Shadow, std::make_shared<ShadowShader>() });
 	shaderLibs.insert({ ShaderType::BlinnPhongWithShadow, std::make_shared<BlinnPhongWithShadowShader>() });
 }
@@ -96,7 +98,7 @@ void Renderer::ShadowPass(Window* winHandle)
 
 void Renderer::DefaultPass(Window* winHandle)
 {
-	BindShader(ShaderType::WireFrame);
+	BindShader(ShaderType::PBR);
 	activeShader->light = activeScene->GetLight();
 	activeShader->model = glm::identity<glm::mat4>();
 	activeShader->itModel = glm::mat3(glm::transpose(glm::inverse(activeShader->model)));
@@ -120,9 +122,12 @@ void Renderer::DefaultPass(Window* winHandle)
 			{
 				const Primative& primative = primatives[p];
 				uint32_t nface = primative.getNface();
-				/*activeShader->SetSampler(0, model.diffuse());
-				activeShader->SetSampler(1, model.specular());
-				activeShader->SetSampler(2, model.normalMap());*/
+				activeShader->SetSampler(0, primative.GetMaterial()->diffuse);
+				activeShader->SetSampler(1, primative.GetMaterial()->specular);
+				activeShader->SetSampler(2, primative.GetMaterial()->normal);
+				activeShader->SetSampler(3, primative.GetMaterial()->ao);
+				activeShader->SetSampler(4, primative.GetMaterial()->roughness);
+				activeShader->SetSampler(5, primative.GetMaterial()->metalness);
 				for (uint32_t j = 0; j < nface; j++)
 				{
 					for (uint32_t k = 0; k < 3; k++)

@@ -10,6 +10,12 @@ void Shader::SetSampler(uint32_t slot, const std::shared_ptr<Texture>& texture)
 		specularTexture = texture; break;
 	case 2:
 		tbnNormalTexture = texture; break;
+	case 3:
+		aoTexture = texture; break;
+	case 4:
+		roughnessTexture = texture; break;
+	case 5:
+		metalnessTexture = texture; break;
 	default:
 		break;
 	}

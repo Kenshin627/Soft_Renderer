@@ -13,7 +13,7 @@ bool WireFrameShader::Fragment(glm::vec4& gl_FragColor)
 {
 	if (baryCentric.x <= lineWidth || baryCentric.y <= lineWidth || baryCentric.z <= lineWidth)
 	{
-		gl_FragColor = { baseColor, 255 };
+		gl_FragColor = { baseColor, 1.0f };
 		return false;
 	}
 	return true;

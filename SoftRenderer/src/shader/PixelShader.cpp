@@ -14,6 +14,6 @@ bool PixelShader::Fragment(glm::vec4& gl_FragColor)
 	glm::vec3 n = normals[0] * baryCentric.x + normals[1] * baryCentric.y + normals[2] * baryCentric.z;
 	n = glm::normalize(n);
 	float pixelIntensity = glm::max<float>(0.0, glm::dot(n, lightDir));
-	gl_FragColor = { baseColor.r * pixelIntensity, baseColor.g * pixelIntensity, baseColor.b * pixelIntensity, 255 };
+	gl_FragColor = { baseColor.r * pixelIntensity, baseColor.g * pixelIntensity, baseColor.b * pixelIntensity, 1.0f };
 	return false;
 }
