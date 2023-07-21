@@ -24,8 +24,7 @@ bool PbrShader::Fragment(glm::vec4& gl_fragColor)
 	glm::vec3 NORMAL = glm::normalize(TBN * samplerN);
 
 	//光照方向取反，从像素出发
-	glm::vec3 L = glm::normalize(-light->Direction());
-	glm::vec3 lightColor = light->Color();
+	
 	glm::vec3 V = glm::normalize(camPos - worldPos);
 	glm::vec3  R = glm::reflect(-V, NORMAL);
 	glm::vec3 lo { 0.0f };
@@ -38,20 +37,28 @@ bool PbrShader::Fragment(glm::vec4& gl_fragColor)
 	glm::vec3 albedo = Sampler2D(uv, diffuseTexture);
 
 	F0 = glm::mix(F0, albedo, metalness);
-	glm::vec3 H = glm::normalize(V + L);
 
-	float NDF = DistributionGGX(NORMAL, H, roughness);
-	float G = GeometrySmith(NORMAL, V, L, roughness);
-	glm::vec3 F = FreshelSchlick(glm::clamp(glm::dot(H, V), 0.0f, 1.0f), F0);
+	for (uint32_t i = 0; i < pointLights.size(); i++)
+	{
+		const std::shared_ptr<PointLight>& plight = pointLights[i];
+		glm::vec3 L = glm::normalize(plight->GetPosition() -worldPos);
+		glm::vec3 lightColor = plight->GetColor();
+		float distance = glm::distance(plight->GetPosition(), worldPos);
+		glm::vec3 H = glm::normalize(V + L);
+		lightColor = 1.0f / (distance * distance) * lightColor;
+		float NDF = DistributionGGX(NORMAL, H, roughness);
+		float G = GeometrySmith(NORMAL, V, L, roughness);
+		glm::vec3 F = FreshelSchlick(glm::clamp(glm::dot(H, V), 0.0f, 1.0f), F0);
 
-	glm::vec3 numerator = NDF * F * G;
-	float denominator = 4.0f * glm::max(glm::dot(NORMAL, V), 0.0f) * glm::max(glm::dot(NORMAL, L), 0.0f) + 0.0001;
-	glm::vec3 specBRDF = numerator / denominator;
-	glm::vec3 Ks = F;
-	glm::vec3 Kd = glm::vec3(1.0f) - Ks;
-	Kd *= (1.0f - metalness);
-	float NdotL = glm::max(glm::dot(NORMAL, L), 0.0f);
-	lo += (Kd * albedo / PI + specBRDF) * lightColor * NdotL;
+		glm::vec3 numerator = NDF * F * G;
+		float denominator = 4.0f * glm::max(glm::dot(NORMAL, V), 0.0f) * glm::max(glm::dot(NORMAL, L), 0.0f) + 0.0001;
+		glm::vec3 specBRDF = numerator / denominator;
+		glm::vec3 Ks = F;
+		glm::vec3 Kd = glm::vec3(1.0f) - Ks;
+		Kd *= (1.0f - metalness);
+		float NdotL = glm::max(glm::dot(NORMAL, L), 0.0f);
+		lo += (Kd * albedo / PI + specBRDF) * lightColor * NdotL;
+	}
 
 	glm::vec3 ambient = glm::vec3(0.03f) * albedo * ao;
 	glm::vec3 color = ambient + lo;

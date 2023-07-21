@@ -100,6 +100,7 @@ void Renderer::DefaultPass(Window* winHandle)
 {
 	BindShader(ShaderType::PBR);
 	activeShader->light = activeScene->GetLight();
+	activeShader->pointLights = activeScene->GetPointLights();
 	activeShader->model = glm::identity<glm::mat4>();
 	activeShader->itModel = glm::mat3(glm::transpose(glm::inverse(activeShader->model)));
 	activeShader->viewProjection = activeScene->GetCamera()->ViewProjection();

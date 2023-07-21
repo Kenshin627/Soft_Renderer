@@ -1,9 +1,11 @@
 #pragma once
 #include "../renderer/Triangle.h"
 #include "../light/DirectionLight.h"
+#include "../light/PointLight.h"
 #include "../renderer/FrameBuffer.h"
 #include "../texture/Texture.h"
 #include <memory>
+#include <vector>
 #include <glm/glm.hpp>
 
 enum ShaderType
@@ -33,6 +35,7 @@ public:
 	glm::mat3 itModel;
 	glm::mat4 viewProjection;
 	std::shared_ptr<DirectionLight> light;
+	std::vector<std::shared_ptr<PointLight>> pointLights;
 	glm::vec3 camPos;
 	//samplers
 	std::shared_ptr<Texture> diffuseTexture; //slot 0

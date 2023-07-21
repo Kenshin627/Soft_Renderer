@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 
 	scene->LoadModel("resource/models/FlightHelmet/FlightHelmet.obj");
 
-	scene->InitLight({ -1, -1, -1 }, { 1, 1, 1 });
+	scene->InitLight({ -1, -1, -1 }, { 10, 10, 10 });
 	scene->InitCamera({ 0.5f, 1.0f, 0.8f }, { 0, 0.3, 0 }, { 0, 1, 0 }, 1.0f / glm::four_over_pi<float>(), aspect, 0.01f, 10.0f);
 
 	//2. Renderer

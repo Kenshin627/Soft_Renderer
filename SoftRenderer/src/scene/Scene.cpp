@@ -18,4 +18,9 @@ void Scene::InitCamera(const glm::vec3& eye, const glm::vec3& center, const glm:
 void Scene::InitLight(const glm::vec3& dir, const glm::vec3& color)
 {
 	light = std::make_shared<DirectionLight>(dir, color);
+
+	pointLights.emplace_back(std::make_shared<PointLight>(glm::vec3(2, 2, 2), glm::vec3(5, 5, 5)));
+	pointLights.emplace_back(std::make_shared<PointLight>(glm::vec3(2, 0.5f, 2), glm::vec3(1, 1, 1)));
+	pointLights.emplace_back(std::make_shared<PointLight>(glm::vec3(2, 2, 0.5f), glm::vec3(1, 1, 1)));
+	pointLights.emplace_back(std::make_shared<PointLight>(glm::vec3(0.5f, 2, 2), glm::vec3(1, 1, 1)));
 }

@@ -2,6 +2,7 @@
 #include "../model2/model2.h"
 #include "../camera/Camera.h"
 #include "../light/DirectionLight.h"
+#include "../light/PointLight.h"
 #include <vector>
 #include <memory>
 
@@ -15,8 +16,10 @@ public:
 	const std::vector<Model2>& GetModels() const { return models; }
 	const std::shared_ptr<Camera>& GetCamera() const { return camera; }
 	const std::shared_ptr<DirectionLight>& GetLight() const { return light; }
+	const std::vector<std::shared_ptr<PointLight>>& GetPointLights() const { return pointLights; }
 private:
 	std::vector<Model2> models;
 	std::shared_ptr<Camera> camera;
 	std::shared_ptr<DirectionLight> light;
+	std::vector<std::shared_ptr<PointLight>> pointLights;
 };
