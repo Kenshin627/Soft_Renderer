@@ -9,6 +9,8 @@
 enum ShaderType
 {
 	Gouraud = 0,
+	Pixel,
+	WireFrame,
 	BlinnPhong,
 	Toon,
 	Shadow,

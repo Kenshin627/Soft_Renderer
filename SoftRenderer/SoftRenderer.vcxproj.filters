@@ -78,6 +78,12 @@
     <ClCompile Include="src\shader\GouraudShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\shader\PixelShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader\WireFrameShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\window\Window.h">
@@ -138,6 +144,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\shader\GouraudShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\PixelShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\WireFrameShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

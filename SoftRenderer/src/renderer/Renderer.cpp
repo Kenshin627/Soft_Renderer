@@ -2,6 +2,8 @@
 #include "Triangle.h"
 #include "../window/Window.h"
 #include "../shader/GouraudShader.h"
+#include "../shader/PixelShader.h"
+#include "../shader/WireFrameShader.h"
 #include "../shader/BlinnPhongShader.h"
 #include "../shader/ShadowShader.h"
 #include "../shader//BlinnPhongWithShadowShader.h"
@@ -11,6 +13,8 @@ Renderer::Renderer() { }
 void Renderer::InitShaders()
 {
 	shaderLibs.insert({ ShaderType::Gouraud, std::make_shared< GouraudShader>() });
+	shaderLibs.insert({ ShaderType::Pixel, std::make_shared<PixelShader>() });
+	shaderLibs.insert({ ShaderType::WireFrame, std::make_shared<WireFrameShader>(0.02) });
 	shaderLibs.insert({ ShaderType::BlinnPhong, std::make_shared<BlinnPhongShader>() });
 	shaderLibs.insert({ ShaderType::Shadow, std::make_shared<ShadowShader>() });
 	shaderLibs.insert({ ShaderType::BlinnPhongWithShadow, std::make_shared<BlinnPhongWithShadowShader>() });
@@ -92,7 +96,7 @@ void Renderer::ShadowPass(Window* winHandle)
 
 void Renderer::DefaultPass(Window* winHandle)
 {
-	BindShader(ShaderType::Gouraud);
+	BindShader(ShaderType::WireFrame);
 	activeShader->light = activeScene->GetLight();
 	activeShader->model = glm::identity<glm::mat4>();
 	activeShader->itModel = glm::mat3(glm::transpose(glm::inverse(activeShader->model)));

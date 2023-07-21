@@ -33,8 +33,10 @@
     <ClCompile Include="src\scene\Scene.cpp" />
     <ClCompile Include="src\shader\BlinnPhongShader.cpp" />
     <ClCompile Include="src\shader\BlinnPhongWithShadowShader.cpp" />
+    <ClCompile Include="src\shader\PixelShader.cpp" />
     <ClCompile Include="src\shader\Shader.cpp" />
     <ClCompile Include="src\shader\ShadowShader.cpp" />
+    <ClCompile Include="src\shader\WireFrameShader.cpp" />
     <ClCompile Include="src\texture\Texture.cpp" />
     <ClCompile Include="src\window\Window.cpp" />
     <ClCompile Include="vendor\stbimage\stb_image.cpp" />
@@ -55,8 +57,10 @@
     <ClInclude Include="src\scene\Scene.h" />
     <ClInclude Include="src\shader\BlinnPhongShader.h" />
     <ClInclude Include="src\shader\BlinnPhongWithShadowShader.h" />
+    <ClInclude Include="src\shader\PixelShader.h" />
     <ClInclude Include="src\shader\Shader.h" />
     <ClInclude Include="src\shader\ShadowShader.h" />
+    <ClInclude Include="src\shader\WireFrameShader.h" />
     <ClInclude Include="src\texture\Texture.h" />
     <ClInclude Include="src\window\Window.h" />
     <ClInclude Include="vendor\stbimage\stb_image.h" />
