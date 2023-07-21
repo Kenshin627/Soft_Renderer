@@ -51,7 +51,7 @@ Model2::Model2(const char* path)
                 if (idx.texcoord_index >= 0) {
                     tinyobj::real_t tx = attrib.texcoords[2 * size_t(idx.texcoord_index) + 0];
                     tinyobj::real_t ty = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
-                    primative.InsertUV(f * 3 + v, tx, ty);
+                    primative.InsertUV(f * 3 + v, tx, 1.0f - ty);
                 }
 
                 // Optional: vertex colors

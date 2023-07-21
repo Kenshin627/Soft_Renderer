@@ -37,7 +37,7 @@ public:
 	std::shared_ptr<Texture> tbnNormalTexture;//slot 2
 
 	//baseColor
-	glm::vec3 baseColor = { 255, 255, 255 };
+	glm::vec3 baseColor = { 1, 1, 1 };
 
 	//TBN
 	glm::vec3 tangent;

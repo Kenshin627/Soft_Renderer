@@ -123,9 +123,9 @@ void Renderer::DefaultPass(Window* winHandle)
 				{
 					for (uint32_t k = 0; k < 3; k++)
 					{
-						const glm::vec3& position = primative.GetPosition(j, k);
-						const glm::vec3& normal = primative.GetNormal(j, k);
-						const glm::vec2& uv = primative.GetUV(j, k);
+						glm::vec3 position = primative.GetPosition(j, k);
+						glm::vec3 normal = primative.GetNormal(j, k);
+						glm::vec2 uv = primative.GetUV(j, k);
 						localPosition[k] = position;
 						uvs[k] = uv;
 						activeShader->Vertex(clipCoords[k], { position, normal, uv }, k);
