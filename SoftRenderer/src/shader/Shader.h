@@ -13,6 +13,7 @@ enum ShaderType
 	Gouraud = 0,
 	Pixel,
 	WireFrame,
+	Point,
 	BlinnPhong,
 	Toon,
 	PBR,
@@ -57,4 +58,7 @@ public:
 	//shadowMap
 	std::shared_ptr<FrameBuffer> shadowBuffer;
 	glm::mat4 viewport;
+
+	//flatShading
+	float flatShadeIntensity;
 };

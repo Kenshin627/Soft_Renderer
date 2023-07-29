@@ -9,14 +9,18 @@
 #include "../shader/ShadowShader.h"
 #include "../shader/BlinnPhongWithShadowShader.h"
 #include "../shader/PbrShader2.h"
+#include "../shader/ToonShader.h"
+#include "../shader/PointShader.h"
 
 Renderer::Renderer() { }
 
 void Renderer::InitShaders()
 {
 	shaderLibs.insert({ ShaderType::Gouraud, std::make_shared< GouraudShader>() });
+	shaderLibs.insert({ ShaderType::Toon, std::make_shared<ToonShader>() });
 	shaderLibs.insert({ ShaderType::Pixel, std::make_shared<PixelShader>() });
 	shaderLibs.insert({ ShaderType::WireFrame, std::make_shared<WireFrameShader>(0.02) });
+	shaderLibs.insert({ ShaderType::Point, std::make_shared<PointShader>() });
 	shaderLibs.insert({ ShaderType::BlinnPhong, std::make_shared<BlinnPhongShader>() });
 	shaderLibs.insert({ ShaderType::PBR, std::make_shared<PbrShader>() });
 	shaderLibs.insert({ ShaderType::PBR2, std::make_shared<PbrShader2>() });
@@ -100,7 +104,7 @@ void Renderer::ShadowPass(Window* winHandle)
 
 void Renderer::DefaultPass(Window* winHandle)
 {
-	BindShader(ShaderType::PBR2);
+	BindShader(ShaderType::Pixel);
 	activeShader->light = activeScene->GetLight();
 	activeShader->pointLights = activeScene->GetPointLights();
 	activeShader->model = glm::identity<glm::mat4>();

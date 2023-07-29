@@ -29,6 +29,7 @@
     <ClCompile Include="src\model2\Primative.cpp" />
     <ClCompile Include="src\model\model.cpp" />
     <ClCompile Include="src\renderer\FrameBuffer.cpp" />
+    <ClCompile Include="src\shader\FlatShader.cpp" />
     <ClCompile Include="src\shader\GouraudShader.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
     <ClCompile Include="src\renderer\Triangle.cpp" />
@@ -38,8 +39,10 @@
     <ClCompile Include="src\shader\PbrShader.cpp" />
     <ClCompile Include="src\shader\PbrShader2.cpp" />
     <ClCompile Include="src\shader\PixelShader.cpp" />
+    <ClCompile Include="src\shader\PointShader.cpp" />
     <ClCompile Include="src\shader\Shader.cpp" />
     <ClCompile Include="src\shader\ShadowShader.cpp" />
+    <ClCompile Include="src\shader\ToonShader.cpp" />
     <ClCompile Include="src\shader\WireFrameShader.cpp" />
     <ClCompile Include="src\texture\Texture.cpp" />
     <ClCompile Include="src\window\Window.cpp" />
@@ -57,6 +60,7 @@
     <ClInclude Include="src\model2\Primative.h" />
     <ClInclude Include="src\model\model.h" />
     <ClInclude Include="src\renderer\FrameBuffer.h" />
+    <ClInclude Include="src\shader\FlatShader.h" />
     <ClInclude Include="src\shader\GouraudShader.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
     <ClInclude Include="src\renderer\Triangle.h" />
@@ -66,8 +70,10 @@
     <ClInclude Include="src\shader\PbrShader.h" />
     <ClInclude Include="src\shader\PbrShader2.h" />
     <ClInclude Include="src\shader\PixelShader.h" />
+    <ClInclude Include="src\shader\PointShader.h" />
     <ClInclude Include="src\shader\Shader.h" />
     <ClInclude Include="src\shader\ShadowShader.h" />
+    <ClInclude Include="src\shader\ToonShader.h" />
     <ClInclude Include="src\shader\WireFrameShader.h" />
     <ClInclude Include="src\texture\Texture.h" />
     <ClInclude Include="src\window\Window.h" />

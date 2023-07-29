@@ -1,0 +1,47 @@
+# Blender MTL File: 'None'
+# Material Count: 3
+
+newmtl Glass_Mat
+Ns 199.999995
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump Glass_Mat_BakeNormal
+map_Kd Glass_Mat_Colour.png
+map_Ka Glass_Mat_AO.png
+map_Pr Glass_Mat_Roughness.png
+map_Pm Glass_Mat_Opacity.png
+
+newmtl Helmet_Stand_Mat
+Ns 199.999995
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump Helmet_Stand_Mat_Normal.png
+map_Kd Helmet_Stand_Mat_Colour.png
+map_Ka Helmet_Stand_Mat_AO.png
+map_Pr Helmet_Stand_Mat_Roughness.png
+map_Pm Helmet_Stand_Mat_Metallic.png
+
+newmtl Mando_Helm_Mat
+Ns 199.999995
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump Mando_Helm_Mat_Normal.png
+map_Kd Mando_Helm_Mat_Colour.png
+map_Ka Mando_Helm_Mat_AO.png
+map_Pr Mando_Helm_Mat_Roughness.png
+map_Pm Mando_Helm_Mat_Metallic.png

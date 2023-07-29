@@ -13,10 +13,23 @@ int main(int argc, char* argv[])
 	//scene->LoadModel("resource/models/head/eye_outter/african_head_eye_outer.obj");
 
 	//scene->LoadModel("resource/models/FlightHelmet/FlightHelmet.obj");
-	scene->LoadModel("resource/models/Gun/Cerberus.obj");
-	
+	//scene->LoadModel("resource/models/mando/mando.obj");
+	//scene->LoadModel("resource/models/Gun/Cerberus.obj");
+	scene->LoadModel("resource/models/david/david.obj");
+
 	scene->InitLight({ -1, -1, -1 }, { 20, 20, 20 });
-	scene->InitCamera({ 0.5f, 1.0f, 0.8f }, { 0, 0.3, 0 }, { 0, 1, 0 }, 1.0f / glm::four_over_pi<float>(), aspect, 0.01f, 10.0f);
+
+	//david
+	scene->InitCamera({ -0.5f, 0.3f, 2.8f }, { 0, 0.2, 0 }, { 0, 1, 0 }, 1.0f / glm::four_over_pi<float>(), aspect, 0.01f, 10.0f);
+
+	//FlightHelmet
+	/*scene->InitCamera({ 0.6f, 0.8f, 0.75f }, { 0, 0.3, 0 }, { 0, 1, 0 }, 1.0f / glm::four_over_pi<float>(), aspect, 0.01f, 10.0f);*/
+
+	//MANDO
+	//scene->InitCamera({ -0.5f, 0.5f, 0.6f }, { 0, 0.2f, 0 }, { 0, 1, 0 }, 1.0f / glm::four_over_pi<float>(), aspect, 0.01f, 10.0f);
+
+	//Gun
+	//scene->InitCamera({ 0.5f, 0.7f, 1.0f }, { 0, 0.3f, 0 }, { 0, 1, 0 }, 1.0f / glm::four_over_pi<float>(), aspect, 0.01f, 10.0f);
 
 	//2. Renderer
 	Renderer renderer;
