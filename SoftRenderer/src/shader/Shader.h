@@ -16,6 +16,7 @@ enum ShaderType
 	BlinnPhong,
 	Toon,
 	PBR,
+	PBR2,
 	Shadow,
 	BlinnPhongWithShadow
 };

@@ -36,6 +36,7 @@
     <ClCompile Include="src\shader\BlinnPhongShader.cpp" />
     <ClCompile Include="src\shader\BlinnPhongWithShadowShader.cpp" />
     <ClCompile Include="src\shader\PbrShader.cpp" />
+    <ClCompile Include="src\shader\PbrShader2.cpp" />
     <ClCompile Include="src\shader\PixelShader.cpp" />
     <ClCompile Include="src\shader\Shader.cpp" />
     <ClCompile Include="src\shader\ShadowShader.cpp" />
@@ -63,6 +64,7 @@
     <ClInclude Include="src\shader\BlinnPhongShader.h" />
     <ClInclude Include="src\shader\BlinnPhongWithShadowShader.h" />
     <ClInclude Include="src\shader\PbrShader.h" />
+    <ClInclude Include="src\shader\PbrShader2.h" />
     <ClInclude Include="src\shader\PixelShader.h" />
     <ClInclude Include="src\shader\Shader.h" />
     <ClInclude Include="src\shader\ShadowShader.h" />

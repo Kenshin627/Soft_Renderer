@@ -7,7 +7,8 @@
 #include "../shader/BlinnPhongShader.h"
 #include "../shader/PbrShader.h"
 #include "../shader/ShadowShader.h"
-#include "../shader//BlinnPhongWithShadowShader.h"
+#include "../shader/BlinnPhongWithShadowShader.h"
+#include "../shader/PbrShader2.h"
 
 Renderer::Renderer() { }
 
@@ -18,6 +19,7 @@ void Renderer::InitShaders()
 	shaderLibs.insert({ ShaderType::WireFrame, std::make_shared<WireFrameShader>(0.02) });
 	shaderLibs.insert({ ShaderType::BlinnPhong, std::make_shared<BlinnPhongShader>() });
 	shaderLibs.insert({ ShaderType::PBR, std::make_shared<PbrShader>() });
+	shaderLibs.insert({ ShaderType::PBR2, std::make_shared<PbrShader2>() });
 	shaderLibs.insert({ ShaderType::Shadow, std::make_shared<ShadowShader>() });
 	shaderLibs.insert({ ShaderType::BlinnPhongWithShadow, std::make_shared<BlinnPhongWithShadowShader>() });
 }
@@ -98,7 +100,7 @@ void Renderer::ShadowPass(Window* winHandle)
 
 void Renderer::DefaultPass(Window* winHandle)
 {
-	BindShader(ShaderType::PBR);
+	BindShader(ShaderType::PBR2);
 	activeShader->light = activeScene->GetLight();
 	activeShader->pointLights = activeScene->GetPointLights();
 	activeShader->model = glm::identity<glm::mat4>();
