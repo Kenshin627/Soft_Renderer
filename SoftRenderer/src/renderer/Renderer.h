@@ -35,6 +35,7 @@ public:
 	void DrawLine(Window* winHandle);
 	void ShadowPass(Window* winHandle);
 	void DefaultPass(Window* winHandle);
+	void PostProcess(Window* winHandle);
 	void Clear();
 	void Rasterize(glm::vec4* vertices, Window* winHandle, std::shared_ptr<FrameBuffer>& currentBuffer, bool present = true);
 	BoundingBox GetBoundingBox(const glm::vec4* vertices);
@@ -49,4 +50,5 @@ private:
 	Viewport viewport = Viewport();
 	std::shared_ptr<FrameBuffer> defaultPassFrameBuffer;
 	std::shared_ptr<FrameBuffer> shadowPassFrameBuffer;
+	std::shared_ptr<FrameBuffer> postProcessBuffer;
 };

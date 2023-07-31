@@ -10,7 +10,7 @@ public:
 	void SetRenderer(Renderer* renderer) { softRenderer = renderer; }
 	~Window();
 	void ShutDowm();
-	void DrawPoint(int x, int y, const glm::vec3& color);
+	void DrawPoint(int x, int y, const glm::vec3& color, bool flip = true);
 	void Clear();
 	void Run();
 private:

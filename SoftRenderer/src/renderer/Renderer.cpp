@@ -11,6 +11,8 @@
 #include "../shader/PbrShader2.h"
 #include "../shader/ToonShader.h"
 #include "../shader/PointShader.h"
+#include "../shader/RGBSpliterShader.h"
+#include "../shader/GrayScaleShader.h"
 
 Renderer::Renderer() { }
 
@@ -26,6 +28,8 @@ void Renderer::InitShaders()
 	shaderLibs.insert({ ShaderType::PBR2, std::make_shared<PbrShader2>() });
 	shaderLibs.insert({ ShaderType::Shadow, std::make_shared<ShadowShader>() });
 	shaderLibs.insert({ ShaderType::BlinnPhongWithShadow, std::make_shared<BlinnPhongWithShadowShader>() });
+	shaderLibs.insert({ ShaderType::RGBSpliter, std::make_shared<RGBSpliterShader>(glm::vec2(10.0f, 10.0f)) });
+	shaderLibs.insert({ ShaderType::GrayScale, std::make_shared<GrayScaleShader>() });
 }
 
 void Renderer::BindShader(ShaderType type)
@@ -59,6 +63,7 @@ void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t heig
 	};
 	defaultPassFrameBuffer = std::make_unique<FrameBuffer>(width, height);
 	shadowPassFrameBuffer = std::make_unique<FrameBuffer>(width, height);
+	postProcessBuffer = std::make_shared < FrameBuffer>(width, height);
 }
 
 void Renderer::ShadowPass(Window* winHandle)
@@ -104,7 +109,7 @@ void Renderer::ShadowPass(Window* winHandle)
 
 void Renderer::DefaultPass(Window* winHandle)
 {
-	BindShader(ShaderType::Pixel);
+	BindShader(ShaderType::PBR);
 	activeShader->light = activeScene->GetLight();
 	activeShader->pointLights = activeScene->GetPointLights();
 	activeShader->model = glm::identity<glm::mat4>();
@@ -147,17 +152,43 @@ void Renderer::DefaultPass(Window* winHandle)
 						activeShader->Vertex(clipCoords[k], { position, normal, uv }, k);
 					}
 					ComputeTBN(localPosition, uvs);
-					Rasterize(clipCoords, winHandle, defaultPassFrameBuffer);
+					Rasterize(clipCoords, winHandle, defaultPassFrameBuffer, false);
 				}
 			}			
 		}
+		defaultPassFrameBuffer->colorAttachment.flip_vertically();
+		defaultPassFrameBuffer->colorAttachment.write_tga_file("output.tga");
 	}
+}
+
+void Renderer::PostProcess(Window* winHandle)
+{
+	BindShader(ShaderType::GrayScale);
+	//屏幕空间对上一个pass的attachment采样
+	auto shader = shaderLibs.find(ShaderType::GrayScale)->second;
+	shader->prePassColorAttachment = defaultPassFrameBuffer->colorAttachment;
+	uint32_t height = shader->prePassColorAttachment.get_height();
+	uint32_t width = shader->prePassColorAttachment.get_width();
+	glm::vec4 gl_FragColor;
+	for (uint32_t y = 0; y < height; y++)
+	{
+		for (uint32_t x = 0; x < width; x++)
+		{
+			shader->currentPixel = glm::vec2(x, y);
+			shader->Fragment(gl_FragColor);			
+			winHandle->DrawPoint(x, y, glm::vec3(gl_FragColor) * 255.0f, false);
+			postProcessBuffer->colorAttachment.set(x, y, TGAColor(gl_FragColor.r * 255, gl_FragColor.g * 255, gl_FragColor.b * 255, 255));
+		}
+	}
+
+	postProcessBuffer->colorAttachment.write_tga_file("postProcess.tga");
 }
 
 void Renderer::Draw(Window* winHandle)
 {
 	//ShadowPass(winHandle);
 	DefaultPass(winHandle);
+	PostProcess(winHandle);
 }
 
 void Renderer::DrawLine(Window* winHandle)
@@ -227,7 +258,9 @@ void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle, std::shared_pt
 					if (present)
 					{
 						windHandle->DrawPoint(p.x, p.y, glm::vec3(gl_FragColor) * 255.0f);
+						
 					}
+					currentBuffer->colorAttachment.set(p.x, p.y, TGAColor(gl_FragColor.r * 255, gl_FragColor.g * 255, gl_FragColor.b * 255, 255));
 					currentBuffer->zBuffer[pixelIndex] = depth;
 				}
 			}

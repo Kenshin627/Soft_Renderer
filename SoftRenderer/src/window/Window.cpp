@@ -54,9 +54,16 @@ void Window::Run()
 	}
 }
 
-void Window::DrawPoint(int x, int y, const glm::vec3& color)
+void Window::DrawPoint(int x, int y, const glm::vec3& color, bool flip)
 {
-	glm::vec2 sdlPoint = sdlTransform * glm::vec3(x, y, 1.0f);
+	glm::vec2 sdlPoint;
+	if (flip)
+	{
+		sdlPoint = sdlTransform * glm::vec3(x, y, 1.0f);
+	}
+	else {
+		sdlPoint = glm::vec2(x, y);
+	}
 	SDL_SetRenderDrawColor(drawHnadle, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawPoint(drawHnadle, sdlPoint.x, sdlPoint.y);
 }

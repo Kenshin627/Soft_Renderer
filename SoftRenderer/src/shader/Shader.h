@@ -19,7 +19,9 @@ enum ShaderType
 	PBR,
 	PBR2,
 	Shadow,
-	BlinnPhongWithShadow
+	BlinnPhongWithShadow,
+	RGBSpliter,
+	GrayScale
 };
 
 class Shader
@@ -61,4 +63,8 @@ public:
 
 	//flatShading
 	float flatShadeIntensity;
+
+	//postProcess
+	glm::vec2 currentPixel;
+	TGAImage prePassColorAttachment;
 };

@@ -105,6 +105,12 @@
     <ClCompile Include="src\shader\PointShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\shader\RGBSpliterShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader\GrayScaleShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\window\Window.h">
@@ -192,6 +198,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\shader\PointShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\RGBSpliterShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\GrayScaleShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

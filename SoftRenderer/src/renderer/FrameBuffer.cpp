@@ -15,6 +15,7 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::Reset()
 {
+	colorAttachment.clear();
 	for (uint32_t i = 0; i < width * height; i++)
 	{
 		zBuffer[i] = std::numeric_limits<float>::max();
