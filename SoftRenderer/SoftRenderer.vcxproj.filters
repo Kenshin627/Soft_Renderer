@@ -111,6 +111,9 @@
     <ClCompile Include="src\shader\GrayScaleShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\shader\MosaicShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\window\Window.h">
@@ -204,6 +207,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\shader\GrayScaleShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\MosaicShader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

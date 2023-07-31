@@ -21,7 +21,8 @@ enum ShaderType
 	Shadow,
 	BlinnPhongWithShadow,
 	RGBSpliter,
-	GrayScale
+	GrayScale,
+	MosaicArt
 };
 
 class Shader

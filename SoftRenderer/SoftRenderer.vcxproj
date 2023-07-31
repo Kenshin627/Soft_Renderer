@@ -37,6 +37,7 @@
     <ClCompile Include="src\shader\BlinnPhongShader.cpp" />
     <ClCompile Include="src\shader\BlinnPhongWithShadowShader.cpp" />
     <ClCompile Include="src\shader\GrayScaleShader.cpp" />
+    <ClCompile Include="src\shader\MosaicShader.cpp" />
     <ClCompile Include="src\shader\PbrShader.cpp" />
     <ClCompile Include="src\shader\PbrShader2.cpp" />
     <ClCompile Include="src\shader\PixelShader.cpp" />
@@ -70,6 +71,7 @@
     <ClInclude Include="src\shader\BlinnPhongShader.h" />
     <ClInclude Include="src\shader\BlinnPhongWithShadowShader.h" />
     <ClInclude Include="src\shader\GrayScaleShader.h" />
+    <ClInclude Include="src\shader\MosaicShader.h" />
     <ClInclude Include="src\shader\PbrShader.h" />
     <ClInclude Include="src\shader\PbrShader2.h" />
     <ClInclude Include="src\shader\PixelShader.h" />

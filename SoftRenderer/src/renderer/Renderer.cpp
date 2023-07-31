@@ -13,6 +13,7 @@
 #include "../shader/PointShader.h"
 #include "../shader/RGBSpliterShader.h"
 #include "../shader/GrayScaleShader.h"
+#include "../shader/MosaicShader.h"
 
 Renderer::Renderer() { }
 
@@ -30,6 +31,7 @@ void Renderer::InitShaders()
 	shaderLibs.insert({ ShaderType::BlinnPhongWithShadow, std::make_shared<BlinnPhongWithShadowShader>() });
 	shaderLibs.insert({ ShaderType::RGBSpliter, std::make_shared<RGBSpliterShader>(glm::vec2(10.0f, 10.0f)) });
 	shaderLibs.insert({ ShaderType::GrayScale, std::make_shared<GrayScaleShader>() });
+	shaderLibs.insert({ ShaderType::MosaicArt, std::make_shared<MosaicShader>(90.0f) });
 }
 
 void Renderer::BindShader(ShaderType type)
@@ -163,9 +165,9 @@ void Renderer::DefaultPass(Window* winHandle)
 
 void Renderer::PostProcess(Window* winHandle)
 {
-	BindShader(ShaderType::GrayScale);
+	BindShader(ShaderType::MosaicArt);
 	//屏幕空间对上一个pass的attachment采样
-	auto shader = shaderLibs.find(ShaderType::GrayScale)->second;
+	auto shader = shaderLibs.find(ShaderType::MosaicArt)->second;
 	shader->prePassColorAttachment = defaultPassFrameBuffer->colorAttachment;
 	uint32_t height = shader->prePassColorAttachment.get_height();
 	uint32_t width = shader->prePassColorAttachment.get_width();
