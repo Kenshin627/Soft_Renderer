@@ -35,6 +35,7 @@ public:
 	void DrawLine(Window* winHandle);
 	void ShadowPass(Window* winHandle);
 	void DefaultPass(Window* winHandle);
+	void TrianglePass(Window* winHnadle);
 	void PostProcess(Window* winHandle);
 	void Clear();
 	void Rasterize(glm::vec4* vertices, Window* winHandle, std::shared_ptr<FrameBuffer>& currentBuffer, bool present = true);

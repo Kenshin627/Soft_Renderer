@@ -163,6 +163,11 @@ void Renderer::DefaultPass(Window* winHandle)
 	}
 }
 
+void Renderer::TrianglePass(Window* winHandle)
+{
+	
+}
+
 void Renderer::PostProcess(Window* winHandle)
 {
 	BindShader(ShaderType::MosaicArt);
