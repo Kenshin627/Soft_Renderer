@@ -18,6 +18,8 @@ private:
 	SDL_Renderer* drawHandle = nullptr;
 	Renderer* softRenderer = nullptr;
 	bool shouldClosed = false;
-	glm::vec3 clearColor = { 10/255, 10/255, 10/255 };
+	glm::vec3 clearColor = { 50.0f, 50.0, 100.0f };
 	glm::mat3 sdlTransform;
+	uint32_t width;
+	uint32_t height;
 };

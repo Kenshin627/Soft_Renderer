@@ -1,7 +1,7 @@
 #include "Window.h"
 #include <iostream>
 
-Window::Window(const char* title, uint32_t width, uint32_t height)
+Window::Window(const char* title, uint32_t w, uint32_t h):width(w),height(h)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
@@ -70,6 +70,6 @@ void Window::DrawPoint(int x, int y, const glm::vec3& color, bool flip)
 
 void Window::Clear()
 {
-	SDL_SetRenderDrawColor(drawHandle, clearColor.r, clearColor.b, clearColor.g, SDL_ALPHA_OPAQUE);
+	SDL_SetRenderDrawColor(drawHandle, clearColor.r, clearColor.g, clearColor.b, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(drawHandle);
 }
