@@ -42,6 +42,7 @@ int main(int argc, char* argv[])
 	//3. Window
 	Window window{ "softRenderer", width, height };
 	window.SetRenderer(&renderer);
+	renderer.SetDrawHandle(&window);
 	window.Run();
 	window.ShutDowm();
 	return 0;

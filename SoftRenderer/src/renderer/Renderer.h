@@ -39,18 +39,19 @@ class Renderer
 public:
 	Renderer();
 	~Renderer() = default;
+	void SetDrawHandle(Window* win);
 	void InitShaders();
 	void BindShader(ShaderType type);
 	void BeginScene(const std::shared_ptr<Scene>& scene);
 	void EndScene();
-	void Draw(Window* winHandle);
-	void DrawLine(Window* winHandle);
-	void ShadowPass(Window* winHandle);
-	void DefaultPass(Window* winHandle);
-	void TrianglePass(Window* winHnadle);
-	void PostProcess(Window* winHandle);
+	void Draw();
+	void DrawLine();
+	void ShadowPass();
+	void DefaultPass();
+	void TrianglePass();
+	void PostProcess();
 	void Clear();
-	void Rasterize(glm::vec4* vertices, Window* winHandle, std::shared_ptr<FrameBuffer>& currentBuffer, bool present = true);
+	void Rasterize(glm::vec4* vertices, std::shared_ptr<FrameBuffer>& currentBuffer, bool present = true);
 	BoundingBox GetBoundingBox(const glm::vec4* vertices);
 	glm::vec3 BaryCentric(const glm::vec4* vertices, const glm::vec2& p);
 	void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
@@ -64,4 +65,5 @@ private:
 	std::shared_ptr<FrameBuffer> defaultPassFrameBuffer;
 	std::shared_ptr<FrameBuffer> shadowPassFrameBuffer;
 	std::shared_ptr<FrameBuffer> postProcessBuffer;
+	Window* winHandle = nullptr;
 };

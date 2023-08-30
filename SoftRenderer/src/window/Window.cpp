@@ -49,7 +49,7 @@ void Window::Run()
 		}
 		Clear();
 		softRenderer->Clear();
-		softRenderer->Draw(this);
+		softRenderer->Draw();
 		SDL_RenderPresent(drawHandle);
 	}
 }

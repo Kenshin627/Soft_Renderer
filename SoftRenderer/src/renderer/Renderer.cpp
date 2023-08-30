@@ -17,6 +17,11 @@
 
 Renderer::Renderer() { }
 
+void Renderer::SetDrawHandle(Window* w)
+{
+	winHandle = w;
+}
+
 void Renderer::InitShaders()
 {
 	shaderLibs.insert({ ShaderType::Gouraud, std::make_shared< GouraudShader>() });
@@ -68,7 +73,7 @@ void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t heig
 	postProcessBuffer = std::make_shared < FrameBuffer>(width, height);
 }
 
-void Renderer::ShadowPass(Window* winHandle)
+void Renderer::ShadowPass()
 {
 	BindShader(ShaderType::Shadow);
 	activeShader->light = activeScene->GetLight();
@@ -102,14 +107,14 @@ void Renderer::ShadowPass(Window* winHandle)
 						VertexAttribute vertex{ pos, normal, uv };
 						activeShader->Vertex(clipCoords[k], vertex, k);
 					}
-					Rasterize(clipCoords, winHandle, shadowPassFrameBuffer, false);
+					Rasterize(clipCoords, shadowPassFrameBuffer, false);
 				}
 			}			
 		}
 	}
 }
 
-void Renderer::DefaultPass(Window* winHandle)
+void Renderer::DefaultPass()
 {
 	BindShader(ShaderType::PBR);
 	activeShader->light = activeScene->GetLight();
@@ -154,7 +159,7 @@ void Renderer::DefaultPass(Window* winHandle)
 						activeShader->Vertex(clipCoords[k], { position, normal, uv }, k);
 					}
 					ComputeTBN(localPosition, uvs);
-					Rasterize(clipCoords, winHandle, defaultPassFrameBuffer, false);
+					Rasterize(clipCoords, defaultPassFrameBuffer, false);
 				}
 			}			
 		}
@@ -163,12 +168,12 @@ void Renderer::DefaultPass(Window* winHandle)
 	}
 }
 
-void Renderer::TrianglePass(Window* winHandle)
+void Renderer::TrianglePass()
 {
 	
 }
 
-void Renderer::PostProcess(Window* winHandle)
+void Renderer::PostProcess()
 {
 	BindShader(ShaderType::MosaicArt);
 	//屏幕空间对上一个pass的attachment采样
@@ -191,14 +196,14 @@ void Renderer::PostProcess(Window* winHandle)
 	postProcessBuffer->colorAttachment.write_tga_file("postProcess.tga");
 }
 
-void Renderer::Draw(Window* winHandle)
+void Renderer::Draw()
 {
 	//ShadowPass(winHandle);
-	DefaultPass(winHandle);
-	PostProcess(winHandle);
+	DefaultPass();
+	PostProcess();
 }
 
-void Renderer::DrawLine(Window* winHandle)
+void Renderer::DrawLine()
 {
 	if (activeScene != nullptr)
 	{
@@ -237,7 +242,7 @@ void Renderer::Clear()
 	shadowPassFrameBuffer->Reset();
 }
 
-void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle, std::shared_ptr<FrameBuffer>& currentBuffer, bool present)
+void Renderer::Rasterize(glm::vec4* vertices, std::shared_ptr<FrameBuffer>& currentBuffer, bool present)
 {
 	glm::vec4 beforeClippedCoords[3] = { viewport.transform * vertices[0], viewport.transform * vertices[1], viewport.transform * vertices[2] };
 	glm::vec4 afterClippedCoords[3] = { beforeClippedCoords[0] / beforeClippedCoords[0].w, beforeClippedCoords[1] / beforeClippedCoords[1].w,beforeClippedCoords[2] / beforeClippedCoords[2].w };
@@ -264,7 +269,7 @@ void Renderer::Rasterize(glm::vec4* vertices, Window* windHandle, std::shared_pt
 				{	
 					if (present)
 					{
-						windHandle->DrawPoint(p.x, p.y, glm::vec3(gl_FragColor) * 255.0f);
+						winHandle->DrawPoint(p.x, p.y, glm::vec3(gl_FragColor) * 255.0f);
 						
 					}
 					currentBuffer->colorAttachment.set(p.x, p.y, TGAColor(gl_FragColor.r * 255, gl_FragColor.g * 255, gl_FragColor.b * 255, 255));
