@@ -173,7 +173,7 @@ void Renderer::DefaultPass()
 			}			
 		}
 		//output image
-		//defaultPassFrameBuffer->colorAttachment.flip_vertically();
+		defaultPassFrameBuffer->colorAttachment.flip_vertically();
 		//defaultPassFrameBuffer->colorAttachment.write_tga_file("output.tga");
 	}
 }
@@ -185,31 +185,31 @@ void Renderer::TrianglePass()
 
 void Renderer::PostProcess()
 {
-	BindShader(ShaderType::RGBSpliter, ShaderStageType::postProcess);
 	//屏幕空间对前一個pass的attachment采样
-	auto shader = shaderLibs.find(ShaderType::RGBSpliter)->second;
-	shader->prePassColorAttachment = defaultPassFrameBuffer->colorAttachment;
-	uint32_t height = shader->prePassColorAttachment.get_height();
-	uint32_t width = shader->prePassColorAttachment.get_width();
+	
+	postProcessShader->prePassColorAttachment = defaultPassFrameBuffer->colorAttachment;
+	uint32_t height = postProcessShader->prePassColorAttachment.get_height();
+	uint32_t width = postProcessShader->prePassColorAttachment.get_width();
 	glm::vec4 gl_FragColor;
 	for (uint32_t y = 0; y < height; y++)
 	{
 		for (uint32_t x = 0; x < width; x++)
 		{
-			shader->currentPixel = glm::vec2(x, y);
-			shader->Fragment(gl_FragColor);			
+			postProcessShader->currentPixel = glm::vec2(x, y);
+			postProcessShader->Fragment(gl_FragColor);
 			winHandle->DrawPoint(x, y, glm::vec3(gl_FragColor) * 255.0f, false);
 			postProcessBuffer->colorAttachment.set(x, y, TGAColor(gl_FragColor.r * 255, gl_FragColor.g * 255, gl_FragColor.b * 255, 255));
 		}
 	}
 	//output image
-	//postProcessBuffer->colorAttachment.write_tga_file("postProcess.tga");
+	postProcessBuffer->colorAttachment.write_tga_file("postProcess.tga");
 }
 
 void Renderer::Draw()
 {
 	//ShadowPass(winHandle);
-	BindShader(ShaderType::NormalMap, ShaderStageType::defaultRaster);
+	BindShader(ShaderType::Toon, ShaderStageType::defaultRaster);
+	//BindShader(ShaderType::RGBSpliter, ShaderStageType::postProcess);
 	DefaultPass();
 	if (postProcessShader)
 	{
