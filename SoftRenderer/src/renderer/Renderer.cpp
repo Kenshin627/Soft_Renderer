@@ -168,7 +168,7 @@ void Renderer::DefaultPass()
 						activeShader->Vertex(clipCoords[k], { position, normal, uv }, k);
 					}
 					ComputeTBN(localPosition, uvs);
-					Rasterize(clipCoords, winHandle, defaultPassFrameBuffer, !postProcessShader);
+					Rasterize(clipCoords, defaultPassFrameBuffer, !postProcessShader);
 				}
 			}			
 		}
@@ -210,10 +210,10 @@ void Renderer::Draw()
 {
 	//ShadowPass(winHandle);
 	BindShader(ShaderType::NormalMap, ShaderStageType::defaultRaster);
-	DefaultPass(winHandle);
+	DefaultPass();
 	if (postProcessShader)
 	{
-		PostProcess(winHandle);
+		PostProcess();
 	}
 }
 
