@@ -9,9 +9,17 @@ void PbrShader::Vertex(glm::vec4& gl_Position, const VertexAttribute& vertex, ui
 
 bool PbrShader::Fragment(glm::vec4& gl_fragColor)
 {
-	glm::vec2 uv = baryCentric.x * triangle.vertices[0].uv + baryCentric.y * triangle.vertices[1].uv + baryCentric.z * triangle.vertices[2].uv;
-	glm::vec3 worldPos = baryCentric.x * triangle.vertices[0].position + baryCentric.y * triangle.vertices[1].position + baryCentric.z * triangle.vertices[2].position;
-	glm::vec3 worldNormal = glm::normalize(baryCentric.x * triangle.vertices[0].normal + baryCentric.y * triangle.vertices[1].normal + baryCentric.z * triangle.vertices[2].normal);
+	glm::vec2 uv = baryCentric.x * triangle.vertices[0].uv + 
+		baryCentric.y * triangle.vertices[1].uv +
+		baryCentric.z * triangle.vertices[2].uv;
+	glm::vec3 worldPos = baryCentric.x * triangle.vertices[0].position + 
+		baryCentric.y * triangle.vertices[1].position + 
+		baryCentric.z * triangle.vertices[2].position;
+	glm::vec3 worldNormal = glm::normalize(
+		baryCentric.x * triangle.vertices[0].normal + 
+		baryCentric.y * triangle.vertices[1].normal + 
+		baryCentric.z * triangle.vertices[2].normal
+	);
 
 	//ππ‘ÏTBN
 	glm::vec3 N = worldNormal;

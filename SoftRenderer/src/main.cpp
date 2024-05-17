@@ -2,8 +2,8 @@
 #include <glm/gtc/type_ptr.hpp>
 int main(int argc, char* argv[])
 {
-	uint32_t width = 800;
-	uint32_t height = 600;
+	uint32_t width = 1920;
+	uint32_t height = 1080;
 	float aspect = (float)width / height;
 
 	//1.Scene
@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 	//scene->LoadModel("resource/models/Gun/Cerberus.obj");
 	//scene->LoadModel("resource/models/david/david.obj");
 
-	scene->InitLight({ -1, -1, -1 }, { 20, 20, 20 });
+	scene->InitLight({ -1, -1, -1 }, { 1, 1, 1 });
 
 	//david
 	/*scene->InitCamera({ -0.5f, 0.3f, 2.8f }, { 0, 0.2, 0 }, { 0, 1, 0 }, 1.0f / glm::four_over_pi<float>(), aspect, 0.01f, 10.0f);*/

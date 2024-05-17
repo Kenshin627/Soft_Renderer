@@ -10,6 +10,7 @@
 
 enum ShaderType
 {
+	deActive = -1,
 	Gouraud = 0,
 	Pixel,
 	WireFrame,
@@ -22,7 +23,14 @@ enum ShaderType
 	BlinnPhongWithShadow,
 	RGBSpliter,
 	GrayScale,
-	MosaicArt
+	MosaicArt,
+	NormalMap
+};
+
+enum class ShaderStageType
+{
+	defaultRaster,
+	postProcess
 };
 
 class Shader
@@ -34,7 +42,7 @@ public:
 	virtual glm::vec3 Sampler2D(const glm::vec2& uv, const std::shared_ptr<Texture>& texture);
 public:
 	Triangle triangle;
-	glm::vec3 baryCentric;
+	glm::vec3 baryCentric{ 0.0f, 0.0f, 0.0f };
 	//uniforms
 	glm::mat4 model;
 	glm::mat3 itModel;

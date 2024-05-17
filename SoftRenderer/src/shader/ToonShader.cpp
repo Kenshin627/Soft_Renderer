@@ -13,7 +13,7 @@ bool ToonShader::Fragment(glm::vec4& gl_FragColor)
 {
 	//重心坐标插值计算当前像素点光照强度
 	float pixelIntensity = glm::max<float>(0.0, glm::dot(vertexIntensity, baryCentric));
-	if (pixelIntensity >= 0.8)
+	if (pixelIntensity >= 0.9)
 	{
 		pixelIntensity = 1.0;
 	}

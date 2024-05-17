@@ -114,6 +114,12 @@
     <ClCompile Include="src\shader\MosaicShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\shader\NormalMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader\DepthMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\window\Window.h">
@@ -210,6 +216,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\shader\MosaicShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\NormalMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader\DepthMap.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

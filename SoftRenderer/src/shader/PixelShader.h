@@ -7,5 +7,5 @@ public:
 	virtual void Vertex(glm::vec4& gl_Position, const VertexAttribute& vertex, uint32_t vertexIndex) override;
 	virtual bool Fragment(glm::vec4& gl_FragColor) override;
 public:
-	glm::vec3 normals[3];
+	glm::vec3 normals[3] = { glm::vec3(0.0f), glm::vec3(0.0f) , glm::vec3(0.0f) };
 };

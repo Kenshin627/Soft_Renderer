@@ -40,7 +40,7 @@ public:
 	Renderer();
 	~Renderer() = default;
 	void InitShaders();
-	void BindShader(ShaderType type);
+	void BindShader(ShaderType type, ShaderStageType stage);
 	void BeginScene(const std::shared_ptr<Scene>& scene);
 	void EndScene();
 	void Draw(Window* winHandle);
@@ -60,6 +60,7 @@ private:
 	std::shared_ptr<Scene> activeScene;
 	std::unordered_map<ShaderType, std::shared_ptr<Shader>> shaderLibs;
 	std::shared_ptr<Shader> activeShader;
+	std::shared_ptr<Shader> postProcessShader;
 	Viewport viewport = Viewport();
 	std::shared_ptr<FrameBuffer> defaultPassFrameBuffer;
 	std::shared_ptr<FrameBuffer> shadowPassFrameBuffer;

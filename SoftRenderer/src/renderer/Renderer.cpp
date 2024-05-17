@@ -14,6 +14,7 @@
 #include "../shader/RGBSpliterShader.h"
 #include "../shader/GrayScaleShader.h"
 #include "../shader/MosaicShader.h"
+#include "../shader/NormalMap.h"
 
 Renderer::Renderer() { }
 
@@ -32,14 +33,23 @@ void Renderer::InitShaders()
 	shaderLibs.insert({ ShaderType::RGBSpliter, std::make_shared<RGBSpliterShader>(glm::vec2(10.0f, 10.0f)) });
 	shaderLibs.insert({ ShaderType::GrayScale, std::make_shared<GrayScaleShader>() });
 	shaderLibs.insert({ ShaderType::MosaicArt, std::make_shared<MosaicShader>(90.0f) });
+	shaderLibs.insert({ ShaderType::NormalMap, std::make_shared<NormalMapShader>() });
 }
 
-void Renderer::BindShader(ShaderType type)
+void Renderer::BindShader(ShaderType type, ShaderStageType stage)
 {
 	auto res = shaderLibs.find(type);
 	if (res != shaderLibs.cend())
 	{
-		activeShader = res->second;
+		auto curShader = res->second;
+		if (stage == ShaderStageType::defaultRaster)
+		{
+			activeShader = curShader;
+		}
+		else
+		{
+			postProcessShader = curShader;
+		}
 	}
 }
 
@@ -70,7 +80,7 @@ void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t heig
 
 void Renderer::ShadowPass(Window* winHandle)
 {
-	BindShader(ShaderType::Shadow);
+	BindShader(ShaderType::Shadow, ShaderStageType::defaultRaster);
 	activeShader->light = activeScene->GetLight();
 	activeShader->model = glm::identity<glm::mat4>();
 	activeShader->itModel = glm::transpose(glm::inverse(activeShader->model));
@@ -81,18 +91,18 @@ void Renderer::ShadowPass(Window* winHandle)
 	if (activeScene != nullptr)
 	{
 		const std::vector<Model2>& models = activeScene->GetModels();
-		uint32_t modelCount = models.size();
-		for (uint32_t i = 0; i < modelCount; i++)
+		size_t modelCount = models.size();
+		for (size_t i = 0; i < modelCount; i++)
 		{
 			const Model2& model = models[i];
 			const std::vector<Primative> primatives = model.GetAllPrimatives();
-			for (uint32_t p = 0; p < primatives.size(); p++)
+			for (size_t p = 0; p < primatives.size(); p++)
 			{
 				const Primative& primative = primatives[p];
-				uint32_t nface = primative.getNface();
-				for (uint32_t j = 0; j < nface; j++)
+				size_t nface = primative.getNface();
+				for (size_t j = 0; j < nface; j++)
 				{
-					for (uint32_t k = 0; k < 3; k++)
+					for (size_t k = 0; k < 3; k++)
 					{
 						const glm::vec3& pos = primative.GetPosition(j, k);
 						const glm::vec3& normal = primative.GetNormal(j, k);
@@ -111,7 +121,6 @@ void Renderer::ShadowPass(Window* winHandle)
 
 void Renderer::DefaultPass(Window* winHandle)
 {
-	BindShader(ShaderType::PBR);
 	activeShader->light = activeScene->GetLight();
 	activeShader->pointLights = activeScene->GetPointLights();
 	activeShader->model = glm::identity<glm::mat4>();
@@ -126,25 +135,25 @@ void Renderer::DefaultPass(Window* winHandle)
 	if (activeScene != nullptr)
 	{
 		const std::vector<Model2>& models = activeScene->GetModels();
-		uint32_t modelCount = models.size();
-		for (uint32_t i = 0; i < modelCount; i++)
+		size_t modelCount = models.size();
+		for (size_t i = 0; i < modelCount; i++)
 		{
 			const Model2& model = models[i];
 			const std::vector<Primative>& primatives = model.GetAllPrimatives();
-			uint32_t primativeCount = primatives.size();
-			for (uint32_t p = 0; p < primativeCount; p++)
+			size_t primativeCount = primatives.size();
+			for (size_t p = 0; p < primativeCount; p++)
 			{
 				const Primative& primative = primatives[p];
-				uint32_t nface = primative.getNface();
+				size_t nface = primative.getNface();
 				activeShader->SetSampler(0, primative.GetMaterial()->diffuse);
 				activeShader->SetSampler(1, primative.GetMaterial()->specular);
 				activeShader->SetSampler(2, primative.GetMaterial()->normal);
 				activeShader->SetSampler(3, primative.GetMaterial()->ao);
 				activeShader->SetSampler(4, primative.GetMaterial()->roughness);
 				activeShader->SetSampler(5, primative.GetMaterial()->metalness);
-				for (uint32_t j = 0; j < nface; j++)
+				for (size_t j = 0; j < nface; j++)
 				{
-					for (uint32_t k = 0; k < 3; k++)
+					for (size_t k = 0; k < 3; k++)
 					{
 						glm::vec3 position = primative.GetPosition(j, k);
 						glm::vec3 normal = primative.GetNormal(j, k);
@@ -154,12 +163,13 @@ void Renderer::DefaultPass(Window* winHandle)
 						activeShader->Vertex(clipCoords[k], { position, normal, uv }, k);
 					}
 					ComputeTBN(localPosition, uvs);
-					Rasterize(clipCoords, winHandle, defaultPassFrameBuffer, false);
+					Rasterize(clipCoords, winHandle, defaultPassFrameBuffer, !postProcessShader);
 				}
 			}			
 		}
-		defaultPassFrameBuffer->colorAttachment.flip_vertically();
-		defaultPassFrameBuffer->colorAttachment.write_tga_file("output.tga");
+		//output image
+		//defaultPassFrameBuffer->colorAttachment.flip_vertically();
+		//defaultPassFrameBuffer->colorAttachment.write_tga_file("output.tga");
 	}
 }
 
@@ -170,9 +180,9 @@ void Renderer::TrianglePass(Window* winHandle)
 
 void Renderer::PostProcess(Window* winHandle)
 {
-	BindShader(ShaderType::MosaicArt);
-	//屏幕空间对上一个pass的attachment采样
-	auto shader = shaderLibs.find(ShaderType::MosaicArt)->second;
+	BindShader(ShaderType::RGBSpliter, ShaderStageType::postProcess);
+	//屏幕空间对前一個pass的attachment采样
+	auto shader = shaderLibs.find(ShaderType::RGBSpliter)->second;
 	shader->prePassColorAttachment = defaultPassFrameBuffer->colorAttachment;
 	uint32_t height = shader->prePassColorAttachment.get_height();
 	uint32_t width = shader->prePassColorAttachment.get_width();
@@ -187,15 +197,19 @@ void Renderer::PostProcess(Window* winHandle)
 			postProcessBuffer->colorAttachment.set(x, y, TGAColor(gl_FragColor.r * 255, gl_FragColor.g * 255, gl_FragColor.b * 255, 255));
 		}
 	}
-
-	postProcessBuffer->colorAttachment.write_tga_file("postProcess.tga");
+	//output image
+	//postProcessBuffer->colorAttachment.write_tga_file("postProcess.tga");
 }
 
 void Renderer::Draw(Window* winHandle)
 {
 	//ShadowPass(winHandle);
+	BindShader(ShaderType::NormalMap, ShaderStageType::defaultRaster);
 	DefaultPass(winHandle);
-	PostProcess(winHandle);
+	if (postProcessShader)
+	{
+		PostProcess(winHandle);
+	}
 }
 
 void Renderer::DrawLine(Window* winHandle)
